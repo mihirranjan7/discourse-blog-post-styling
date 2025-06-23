@@ -14,6 +14,19 @@
 @import "common/foundation/variables";
 
 // ---
+// Define Sass Fallback Variables for Colors
+// These values are used by Sass color functions (like darken, lighten) during compilation.
+// At runtime, the CSS variables (e.g., var(--primary-action)) will take precedence
+// if they are defined in your theme.
+// ---
+$primary-action-sass: #3498db;          // Example: A default blue for primary actions
+$primary-action-contrast-sass: #ffffff; // Example: White for text on primary action
+$secondary-action-sass: #2ecc71;        // Example: A default green for secondary actions
+$secondary-action-contrast-sass: #ffffff; // Example: White for text on secondary action
+$tertiary-action-sass: #e74c3c;         // Example: A default red for tertiary actions (like outline hover)
+$tertiary-action-contrast-sass: #ffffff; // Example: White for text on tertiary action
+
+// ---
 // Utility Function: str-split
 //
 // Splits a string into a list of substrings based on a given separator.
@@ -87,9 +100,9 @@
   @if $limit and $limit > 0 and length($result) > $limit {
     $limited-result: ();
     @for $i from 1 through $limit {
-      $limited-result: append($limited-result, nth($result, $i));
+      $return: append($return, nth($result, $i));
     }
-    @return $limited-result;
+    @return $return;
   }
 
   @return $result;
@@ -210,8 +223,8 @@
           // Styles for general links that should look like buttons
           a:not(.lightbox):not(.d-icon):not(.mention):not(.hashtag) { // Exclude common Discourse links
             display: inline-block;
-            background-color: var(--primary-action);     // Primary call-to-action color
-            color: var(--primary-action-contrast);       // Text color on the button
+            background-color: var(--primary-action, #{$primary-action-sass}); // Use CSS var, fallback to Sass var
+            color: var(--primary-action-contrast, #{$primary-action-contrast-sass}); // Use CSS var, fallback to Sass var
             padding: 12px 24px;
             text-decoration: none;                       // Remove underline
             border-radius: 6px;                          // Rounded corners for button
@@ -221,28 +234,28 @@
             white-space: nowrap;                         // Prevent button text from wrapping
 
             &:hover {
-              background-color: darken(var(--primary-action), 8%);
+              background-color: darken($primary-action-sass, 8%); // Use Sass var here for darken()
               transform: translateY(-2px);               // Slight lift on hover
             }
 
             // Example of a secondary button style - requires an HTML class like "button-secondary"
             &.button-secondary {
-              background-color: var(--tertiary-action); // A different action color
-              color: var(--tertiary-action-contrast);
-              border: 1px solid var(--tertiary-action);
+              background-color: var(--tertiary-action, #{$tertiary-action-sass}); // Use CSS var, fallback to Sass var
+              color: var(--tertiary-action-contrast, #{$tertiary-action-contrast-sass});
+              border: 1px solid var(--tertiary-action, #{$tertiary-action-sass});
               &:hover {
-                background-color: darken(var(--tertiary-action), 8%);
+                background-color: darken($tertiary-action-sass, 8%); // Use Sass var here for darken()
               }
             }
 
             // Example of an outline button style - requires an HTML class like "button-outline"
             &.button-outline {
                 background-color: transparent;
-                color: var(--primary-action);
-                border: 2px solid var(--primary-action);
+                color: var(--primary-action, #{$primary-action-sass});
+                border: 2px solid var(--primary-action, #{$primary-action-sass});
                 &:hover {
-                    background-color: var(--primary-action-low);
-                    color: var(--primary-action-contrast);
+                    background-color: var(--primary-action-low, lighten($primary-action-sass, 40%)); // Use a Sass lightened version as fallback
+                    color: var(--primary-action-contrast, #{$primary-action-contrast-sass});
                 }
             }
           }
@@ -255,7 +268,7 @@
             display: inline-block;
             font-family: Georgia, serif; // Classic serif font for drop cap
             margin-right: 0.1em;        // Small space after the big letter
-            color: var(--primary-action); // Give the drop cap a highlight color
+            color: var(--primary-action, #{$primary-action-sass}); // Give the drop cap a highlight color
           }
 
           h2, h3, h4, h5, h6 {
@@ -283,14 +296,14 @@
           blockquote {
             background: var(--primary-very-low);        // Background color for quotes
             color: var(--primary-text);                  // Text color for quotes
-            border-left: 5px solid var(--primary-action-low-mid); // Subtle border
+            border-left: 5px solid var(--primary-action-low-mid, lighten($primary-action-sass, 20%)); // Subtle border
             padding: 15px;                               // Internal padding
             margin: 1.5em 0;                             // Vertical margin for separation
             border-radius: 4px;                          // Slight rounding
             font-style: italic;                          // Italicize quoted text
 
             &:before { // Quote icon styling
-              color: var(--primary-action-low-mid);
+              color: var(--primary-action-low-mid, lighten($primary-action-sass, 20%));
               content: open-quote;
               font-size: 3em;
               line-height: 0.1em;
@@ -369,8 +382,8 @@
 
       a.button { // Styles for a primary CTA button within this section
         display: inline-block;
-        background-color: var(--secondary-action);    // Prominent action color
-        color: var(--secondary-action-contrast);      // Contrasting text
+        background-color: var(--secondary-action, #{$secondary-action-sass});    // Prominent action color
+        color: var(--secondary-action-contrast, #{$secondary-action-contrast-sass});      // Contrasting text
         padding: 15px 30px;
         text-decoration: none;
         border-radius: 8px;
@@ -380,7 +393,7 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); // Add a subtle shadow
 
         &:hover {
-          background-color: darken(var(--secondary-action), 8%);
+          background-color: darken($secondary-action-sass, 8%); // Use Sass var here for darken()
           transform: translateY(-3px);
         }
       }
