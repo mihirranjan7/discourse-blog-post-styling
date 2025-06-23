@@ -136,11 +136,16 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
     .blog-image-container,
     #post_1 {
       background-color: var(--primary-background-alt); // Use a distinct background for sections
-      padding: $spacing-md;                            // Consistent internal padding
+      padding: $spacing-md;                             // Consistent internal padding
       margin-bottom: $spacing-lg;                      // Ample space between sections
       border-radius: $border-radius-md;                // Soft rounded corners
       box-shadow: $shadow-sm;                          // Subtle shadow for depth
       overflow: hidden;                                // Ensure content respects border-radius
+    }
+
+    // Hide the category mark
+    .category-mark {
+      display: none;
     }
 
     // --- Hero Section: Topic Title ---
@@ -151,12 +156,12 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
       padding-bottom: $spacing-md;
 
       h1 {
-        font-size: 2.5em;         // Large, impactful heading
-        line-height: 1.15;        // Tighter line height for better visual impact
+        font-size: 2.5em;           // Large, impactful heading
+        line-height: 1.15;          // Tighter line height for better visual impact
         margin-bottom: $spacing-sm; // Space below the main heading
         color: var(--primary-high); // Prominent text color
-        font-weight: 800;         // Extra bold for strong presence
-        letter-spacing: -0.02em;  // Slight kerning adjustment for large text
+        font-weight: 800;           // Extra bold for strong presence
+        letter-spacing: -0.02em;    // Slight kerning adjustment for large text
       }
       p { // Designed for a compelling subtitle or brief intro
         color: var(--primary-medium); // Slightly muted for secondary importance
@@ -176,10 +181,10 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
     .blog-image-container {
       // Background properties are already set for the image.
       .blog-image {
-        height: 320px;            // Generous height for impactful visual
-        background-size: cover;   // Image covers the area, cropping as needed
+        height: 320px;              // Generous height for impactful visual
+        background-size: cover;     // Image covers the area, cropping as needed
         border-radius: $border-radius-md; // Consistent rounded corners
-        box-shadow: $shadow-md;   // A more pronounced shadow for the hero image
+        box-shadow: $shadow-md;     // A more pronounced shadow for the hero image
       }
     }
 
@@ -202,13 +207,13 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
 
         .contents {
-          border-top: none;      // Remove default Discourse border
-          padding-top: 0;        // No top padding here
+          border-top: none;     // Remove default Discourse border
+          padding-top: 0;       // No top padding here
         }
 
         .cooked {
-          font-size: 1.1em;      // Base font size for readability
-          line-height: 1.7;      // Optimal line height for long-form content
+          font-size: 1.1em;     // Base font size for readability
+          line-height: 1.7;     // Optimal line height for long-form content
           word-wrap: break-word; // Ensures long words break correctly
           overflow-wrap: break-word; // Modern alternative
           color: var(--primary-text); // Primary text color for body
@@ -232,7 +237,7 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
             &:hover {
               background-color: darken($primary-action-sass, 8%);
               transform: translateY(-2px); // Subtle lift
-              box-shadow: $shadow-md;      // Enhanced shadow on hover
+              box-shadow: $shadow-md;       // Enhanced shadow on hover
             }
 
             // Secondary Button Style (requires class="button-secondary")
@@ -301,14 +306,14 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
           // Blockquote Styling - for testimonials or key quotes
           blockquote {
             background: var(--primary-very-low);        // Soft background for quotes
-            color: var(--primary-text);                  // Standard text color
+            color: var(--primary-text);                 // Standard text color
             border-left: 5px solid var(--primary-action-low-mid, #{$primary-action-low-mid-sass}); // Accent border
-            padding: $spacing-md $spacing-lg;            // Generous internal padding
-            margin: $spacing-lg 0;                       // Vertical margin for separation
-            border-radius: $border-radius-sm;            // Subtle rounding
-            font-style: italic;                          // Italicize quoted text
-            position: relative;                          // For quote icon positioning
-            box-shadow: $shadow-sm;                      // Gentle shadow
+            padding: $spacing-md $spacing-lg;           // Generous internal padding
+            margin: $spacing-lg 0;                      // Vertical margin for separation
+            border-radius: $border-radius-sm;           // Subtle rounding
+            font-style: italic;                         // Italicize quoted text
+            position: relative;                         // For quote icon positioning
+            box-shadow: $shadow-sm;                     // Gentle shadow
 
             &:before { // Large, subtle quote icon
               color: var(--primary-low-mid, lighten($primary-action-sass, 25%));
@@ -359,7 +364,7 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
           }
 
           figcaption {
-            margin-top: $spacing-sm;           // Space between image and caption
+            margin-top: $spacing-sm;            // Space between image and caption
             font-size: 0.9em;
             font-weight: normal;
             text-align: center;
@@ -382,23 +387,23 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
     // Assumes you might add a `div class="call-to-action"` in your theme template.
     .call-to-action {
       background-color: var(--secondary-background); // A distinct, often vibrant background
-      padding: $spacing-xxl $spacing-md;              // Very generous padding for prominence
+      padding: $spacing-xxl $spacing-md;             // Very generous padding for prominence
       text-align: center;
-      border-radius: $border-radius-lg;               // More pronounced rounded corners
-      margin-top: $spacing-xxl;                       // Large space above
-      margin-bottom: $spacing-xxl;                    // Large space below
-      box-shadow: $shadow-lg;                         // Strong shadow to make it pop
+      border-radius: $border-radius-lg;              // More pronounced rounded corners
+      margin-top: $spacing-xxl;                      // Large space above
+      margin-bottom: $spacing-xxl;                   // Large space below
+      box-shadow: $shadow-lg;                        // Strong shadow to make it pop
 
       h2 {
         font-size: 2em;
-        color: var(--secondary-strong);               // Strong color for CTA heading
+        color: var(--secondary-strong);              // Strong color for CTA heading
         margin-bottom: $spacing-md;
-        font-weight: 800;                             // Extra bold
+        font-weight: 800;                            // Extra bold
         line-height: 1.2;
       }
 
       p {
-        color: var(--secondary-text);                 // Text color for CTA description
+        color: var(--secondary-text);                // Text color for CTA description
         margin-bottom: $spacing-lg;
         font-size: 1.15em;
         line-height: 1.6;
@@ -411,17 +416,17 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
         display: inline-block;
         background-color: var(--secondary-action, #{$secondary-action-sass});
         color: var(--secondary-action-contrast, #{$secondary-action-contrast-sass});
-        padding: 18px $spacing-xxl;                   // Large padding for very easy tapping
+        padding: 18px $spacing-xxl;                  // Large padding for very easy tapping
         text-decoration: none;
-        border-radius: $border-radius-lg;             // More rounded corners
+        border-radius: $border-radius-lg;            // More rounded corners
         font-weight: bold;
-        font-size: 1.2em;                             // Larger font for button text
+        font-size: 1.2em;                            // Larger font for button text
         transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);   // Stronger shadow for the button
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);  // Stronger shadow for the button
 
         &:hover {
           background-color: darken($secondary-action-sass, 8%);
-          transform: translateY(-4px) scale(1.02);    // More pronounced lift and slight scale
+          transform: translateY(-4px) scale(1.02);   // More pronounced lift and slight scale
           box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); // Deeper shadow on hover
         }
       }
