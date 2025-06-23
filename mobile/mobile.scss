@@ -1,17 +1,28 @@
+// =============================================================================
+// Mobile Blog Styling
+//
+// This stylesheet provides responsive and aesthetically optimized styles for
+// blog posts specifically on mobile devices. It includes a utility function
+// for string manipulation and applies styles based on predefined variables.
+// =============================================================================
+
+// Import foundational variables, typically containing colors, typography, etc.
 @import "common/foundation/variables";
 
 // ---
-// String Split Function (No changes needed here for styling improvement)
+// Utility Function: str-split
+//
+// Splits a string into a list of substrings based on a given separator.
+// This function enhances dynamic styling by allowing variable-driven class generation.
+//
+// Source: Modified from pascalduez (https://gist.github.com/pascalduez/065e560c6314c7e9d7f8)
+// Original License: MIT
 // ---
-/// str-split function found at: https://github.com/sass-projects/stringy/blob/master/src/scss/_str-split.scss
-/// License: MIT
-
 /// Splits a String into a list of substrings using `$separator`.
 ///
-/// If separator is omitted, the list returned contains one element consisting of the entire string.
-/// If separator is an empty string, str is converted to a list of all characters.
-/// Integer specifying a limit on the number of splits to be found.
-/// The split method still splits on every match of separator, but it truncates the returned list to at most limit elements.
+/// If `$separator` is omitted, the list returned contains one element consisting of the entire string.
+/// If `$separator` is an empty string, the string is converted to a list of all characters.
+/// An optional `$limit` can truncate the returned list to a maximum number of elements.
 ///
 /// @param {string} $string - The string to split.
 /// @param {string} $separator [null] - The string to split by.
@@ -19,20 +30,26 @@
 ///
 /// @return {list} A list of substrings.
 ///
-/// @author pascalduez https://gist.github.com/pascalduez/065e560c6314c7e9d7f8
+/// @example
+///   str-split("apple,banana,orange", ",") => ("apple", "banana", "orange")
+///   str-split("hello", "")             => ("h", "e", "l", "l", "o")
+///   str-split("one-two-three", "-", 2) => ("one", "two-three")
 @function str-split($string, $separator: null, $limit: null) {
-  $string: unquote($string);
+  $string: unquote($string); // Ensure string is unquoted for processing
 
+  // Error handling for incorrect input type
   @if type-of($string) != "string" {
-    @error "`str-split` function expecting a string for `$string`; #{type-of($string)} given.";
+    @error "`str-split` function expects a string for `$string`, but received a #{type-of($string)}.";
   }
 
-  $result: ();
+  $result: (); // Initialize an empty list to store results
 
+  // Handle case where no separator is provided
   @if not $separator {
-    @return ($string);
+    @return ($string); // Return the entire string as a single-element list
   }
 
+  // Handle case where separator is an empty string (split into characters)
   @if $separator == "" {
     @for $i from 1 through str-length($string) {
       $result: append($result, str-slice($string, $i, $i));
@@ -40,38 +57,52 @@
     @return $result;
   }
 
+  // Main splitting logic
   $current-string: $string;
   $separator-length: str-length($separator);
 
   @while str-index($current-string, $separator) {
+    // If a limit is set and we're approaching it, append the rest and terminate the loop
     @if $limit and length($result) >= ($limit - 1) {
       $result: append($result, $current-string);
-      @break;
+      $current-string: ""; // Clear to exit the loop
+    } @else {
+      // Find the separator and slice the string
+      $index: str-index($current-string, $separator);
+      $result: append($result, str-slice($current-string, 1, ($index - 1)));
+      $current-string: str-slice($current-string, ($index + $separator-length));
     }
-
-    $index: str-index($current-string, $separator);
-    $result: append($result, str-slice($current-string, 1, ($index - 1)));
-    $current-string: str-slice($current-string, ($index + $separator-length));
   }
 
-  $result: append($result, $current-string);
+  // Append any remaining part of the string after the last separator
+  @if $current-string != "" {
+    $result: append($result, $current-string);
+  }
 
+  // Apply the limit after all splits, if the limit was not handled earlier
   @if $limit and $limit > 0 and length($result) > $limit {
-    $return: ();
+    $limited-result: ();
     @for $i from 1 through $limit {
-      $return: append($return, nth($result, $i));
+      $limited-result: append($limited-result, nth($result, $i));
     }
-    @return $return;
+    @return $limited-result;
   }
 
   @return $result;
 }
 
-// ---
-// Blog Category and Tag Styling for Mobile
-// ---
+// =============================================================================
+// Mobile Specific Blog Styling
+//
+// Applies styles only when the `$mobile_enabled` variable is true, ensuring
+// these styles compile only for mobile contexts.
+// =============================================================================
 @if $mobile_enabled == "true" {
-  // Generate category-specific classes
+  // ---
+  // Dynamic Class Generation for Categories and Tags
+  // Creates classes like `.category-news`, `.tag-css`, etc., and extends
+  // the base blog styling placeholders.
+  // ---
   $blog-categories: str-split($blog_category, ",");
   @each $category in $blog-categories {
     .category-#{$category} {
@@ -79,7 +110,6 @@
     }
   }
 
-  // Generate tag-specific classes
   $blog-tags: str-split($blog_tag, "|");
   @each $tag in $blog-tags {
     .tag-#{$tag} {
@@ -87,205 +117,220 @@
     }
   }
 
+  // ---
+  // Base Placeholder Styles for Blog Categories and Tags
+  // These styles are shared by all dynamically generated category and tag classes.
+  // ---
   %blog-tag,
   %blog-category {
-    // --- Topic Title & Image ---
+    // Topic Title Section
     #topic-title {
-      margin-top: 1.5em; // Slightly more margin for breathing room
-      margin-bottom: 1em; // Add bottom margin for separation
-      padding: 0 15px; // Add horizontal padding for content
+      margin-top: 1.5em;      // Increased top margin for visual separation
+      margin-bottom: 1em;     // Space below the title before content starts
+      padding: 0 15px;        // Horizontal padding for content alignment
 
       h1 {
-        font-size: 1.8em; // Slightly larger for better readability on mobile
-        line-height: 1.3; // Improve line spacing
-        margin-bottom: 0.5em; // Space below the title
+        font-size: 1.8em;     // Larger font for main title on mobile for readability
+        line-height: 1.3;     // Improved line spacing
+        margin-bottom: 0.5em; // Space below the heading
       }
       a.edit-topic .d-icon {
-        font-size: 0.6em; // Slightly larger for tap target
+        font-size: 0.6em;     // Slightly larger icon for easier tapping
       }
     }
 
+    // Blog Hero Image Container
     .blog-image-container {
       text-align: center;
-      margin-bottom: 1.5em; // Add space below the image container
-      padding: 0; // Ensure no extra padding, image should go edge-to-edge if designed for that
+      margin-bottom: 1.5em;   // Space below the image
+      padding: 0;             // Ensure no extra padding, allowing full width
 
       .blog-image {
         background-position: center center;
         background-repeat: no-repeat;
-        background-size: contain;
-        height: 250px; // Optimized for mobile screen heights
-        width: 100%; // Ensure it takes full width of its container
+        background-size: contain; // Image fits within the bounds
+        height: 250px;            // Optimized height for common mobile screen sizes
+        width: 100%;              // Ensures image takes full width
 
         @if $image_display_style == 'responsive crop' {
-          background-size: cover; // Fills the space, might crop
-          height: 250px; // Maintain consistent height
+          background-size: cover; // Image covers the area, potentially cropping
+          height: 250px;          // Maintain consistent height
         }
       }
     }
 
-    // --- First Post (Blog Content) ---
+    // ---
+    // Styling for the First Post (Main Blog Content)
+    // Focused on improving readability and presentation of the primary article.
+    // ---
     #post_1 {
-      padding: 0 15px; // Add horizontal padding for consistency with title
+      padding: 0 15px; // Consistent horizontal padding for post content
 
+      // Post Author Avatar
       .topic-avatar {
-        height: 30px; // Slightly larger avatar
-        width: 30px; // Slightly larger avatar
+        height: 30px;
+        width: 30px;
         border-top: none;
         background: none;
-        margin-right: 8px; // More space
-        display: inline-flex; // Use flex for avatar and flair alignment
+        margin-right: 8px;
+        display: inline-flex;  // Use flexbox for better avatar-flair alignment
         align-items: center;
 
         img.avatar {
           height: 30px;
           width: 30px;
-          border-radius: 50%; // Make avatars circular
+          border-radius: 50%; // Circular avatars for modern look
         }
 
         .avatar-flair {
           background-size: 10px 10px; // Slightly larger flair
-          width: 1em; // Adjust width/height based on flair size
+          width: 1em;
           height: 1em;
           top: unset;
-          bottom: -3px; // Adjust position relative to new avatar size
+          bottom: -3px; // Adjusted position relative to new avatar size
           right: -3px;
           svg {
-            height: 0.7em; // Adjust SVG size
+            height: 0.7em;
           }
         }
       }
 
+      // Topic Body (main content area of the post)
       .topic-body {
-        padding-top: 0; // Consistent with initial setting
+        padding-top: 0; // No top padding, content starts directly below title/meta
 
         &.highlighted {
-          animation: none; // Keep animation off
+          animation: none; // Disable highlighting animation for simplicity on mobile
         }
 
         .topic-meta-data {
-          display: flex; // Use flexbox for better alignment of meta info
-          flex-wrap: wrap; // Allow wrapping on small screens
-          justify-content: space-between; // Space out elements
-          align-items: center; // Vertically align items
-          margin-bottom: 15px; // More space below meta data
-          font-size: 0.8em; // Keep concise font size
+          display: flex;             // Use flexbox for flexible meta info layout
+          flex-wrap: wrap;           // Allow elements to wrap on very small screens
+          justify-content: space-between; // Space out meta info
+          align-items: center;       // Vertically align items
+          margin-bottom: 15px;       // More space below metadata
+          font-size: 0.8em;          // Concise font size for meta info
 
           .names {
-            flex-grow: 1; // Allow names to take available space
-            margin-right: 10px; // Space between name and post info
+            flex-grow: 1;            // Allows names to take available space
+            margin-right: 10px;      // Space between name and post info
             .second,
             .user-title {
-              flex-basis: auto; // Let content determine width
-              white-space: nowrap; // Prevent wrapping for user titles if possible
+              flex-basis: auto;      // Content determines width
+              white-space: nowrap;   // Prevent wrapping of user titles
             }
           }
 
           .post-infos {
-            display: flex;
-            // Floats here might disrupt flex layout, consider replacing with flex order/margins
+            display: flex;           // Inner flex for post date/edits
             .post-info.edits {
-              margin-left: 10px; // Consistent spacing
-              order: 2; // Place edits after date
+              margin-left: 10px;     // Consistent spacing
+              order: 2;              // Display edits after date
             }
             .post-info.post-date {
-              order: 1; // Place date first
+              order: 1;              // Display date first
             }
           }
         }
 
         .contents {
-          border-top: 1px solid var(--primary-low);
-          padding-top: 15px; // Add padding above content after border
+          border-top: 1px solid var(--primary-low); // Subtle visual separator
+          padding-top: 15px;                         // Padding above content after border
         }
       }
 
+      // Cooked HTML (parsed post content)
       .cooked {
-        font-size: 1.1em; // Increase base font size for readability
-        line-height: 1.6; // Improve line height for better reading flow
-        word-wrap: break-word; // Ensure long words break correctly
-        overflow-wrap: break-word;
+        font-size: 1.1em;       // Base font size for main content, enhanced readability
+        line-height: 1.6;       // Generous line height for easier reading
+        word-wrap: break-word;  // Ensure long words break correctly
+        overflow-wrap: break-word; // Modern equivalent for word-wrap
 
         big {
-          font-size: 2.2rem; // Slightly larger initial letter
+          font-size: 2.2rem;          // Prominent first letter (drop cap style)
           line-height: 2.2rem;
-          letter-spacing: 0.5px; // Slightly reduced letter spacing for aesthetic
+          letter-spacing: 0.5px;      // Slightly refined letter spacing
           display: inline-block;
-          font-family: Georgia, serif; // Ensure a serif font for classic drop-cap look
-          margin-right: 0.1em; // Small space after the big letter
+          font-family: Georgia, serif; // Classic serif font for drop cap
+          margin-right: 0.1em;        // Small space after the big letter
         }
 
-        // Hide first image if directly after the first paragraph (often a hero image replica)
+        // Hide the first image if it's directly after the first paragraph (often a redundant hero image)
         & > p:first-child + div.lightbox-wrapper {
           display: none;
           & + p {
-            margin-top: -10px; // Reduce margin if image is hidden
+            margin-top: -10px; // Adjust margin of subsequent paragraph if image is hidden
           }
         }
 
-        // Hide images directly within *any* first-level paragraph, unless they are emojis
-        // This is a strong rule; consider if you want ALL images in initial paragraphs hidden
+        // Hide images directly within any first-level paragraph, unless they are emojis.
+        // This is a strong rule and assumes these images are not primary content.
         & > p img:not(.emoji) {
           display: none;
         }
 
-        // Display images in subsequent paragraphs for content images
+        // Display images in subsequent paragraphs, allowing them to be content-specific visuals
         & > p ~ p img:not(.emoji) {
-          display: block;
-          max-width: 100%; // Ensure images don't overflow container
-          height: auto; // Maintain aspect ratio
-          margin: 1em auto; // Center images with vertical spacing
+          display: block;          // Ensure images are block-level elements
+          max-width: 100%;         // Prevent images from overflowing their container
+          height: auto;            // Maintain aspect ratio
+          margin: 1em auto;        // Center images horizontally with vertical spacing
         }
       }
     }
 
-    // --- First Post Specifics ---
+    // ---
+    // Specific Styling for the Very First Topic Post
+    // These styles apply only to the initial post in a topic (the main blog article).
+    // ---
     .topic-post:first-child {
       .cooked {
-        font-size: 1.15em; // Slightly larger for the main blog content
+        font-size: 1.15em; // Slightly larger cooked text for the main post
         .lightbox-wrapper .meta {
-          font-size: 0.8em; // Metadata font size
+          font-size: 0.8em; // Metadata for images within the post
         }
       }
 
+      // Post controls and topic map (e.g., share, reply, likes)
       nav.post-controls .actions,
       .topic-map,
       .post-admin-menu {
-        font-size: 0.8em; // Slightly larger controls for easier tapping
-        margin-top: 1em; // Space above controls
+        font-size: 0.8em; // Larger font for controls for easier tapping
+        margin-top: 1em;  // Space above controls
       }
 
       figure {
-        margin: 1em 0; // Add some vertical margin for figures
-        padding: 0 5px; // Slight horizontal padding
+        margin: 1em 0;    // Vertical margin for figures (images with captions)
+        padding: 0 5px;   // Slight horizontal padding
       }
 
       figcaption {
-        margin-top: 5px; // Positive margin to clearly link to figure
-        font-size: 0.85em; // Slightly larger for captions
+        margin-top: 5px;          // Link caption clearly to the figure
+        font-size: 0.85em;        // Slightly larger for better readability
         font-weight: bold;
-        text-align: center; // Center align captions
-        color: var(--primary-medium); // Slightly muted color for captions
+        text-align: center;       // Center align captions
+        color: var(--primary-medium); // Slightly muted color for less prominence
       }
 
+      // Blockquote styling for quoted content
       blockquote {
-        background: var(--primary-very-low);
-        color: var(--primary-high);
-        border-left: 8px solid var(--primary-low-mid); // Slightly thinner border
-        padding: 1em 15px; // More padding inside blockquote
-        margin: 1.5em 0; // Add vertical margin for separation
+        background: var(--primary-very-low);   // Background color for quotes
+        color: var(--primary-high);            // Text color for quotes
+        border-left: 8px solid var(--primary-low-mid); // Left border for visual distinction
+        padding: 1em 15px;                     // Internal padding within the blockquote
+        margin: 1.5em 0;                       // Vertical margin for separation
 
         &:before {
-          color: var(--primary-low-mid);
-          content: open-quote;
-          font-size: 3em; // Slightly smaller quote mark
-          line-height: 0.1em;
-          vertical-align: -0.4em;
-          margin-right: 0.1em; // Small space after quote mark
+          color: var(--primary-low-mid);       // Color of the quote icon
+          content: open-quote;                 // Generates the open quote character
+          font-size: 3em;                      // Size of the quote icon
+          line-height: 0.1em;                  // Adjust line height to position icon
+          vertical-align: -0.4em;              // Vertically align icon
+          margin-right: 0.1em;                 // Small space after the quote icon
         }
 
         p {
-          display: inline;
+          display: inline; // Ensures paragraphs inside blockquote flow like a single block of text
         }
       }
     }
