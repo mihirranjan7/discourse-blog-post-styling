@@ -1,109 +1,95 @@
 // =============================================================================
-// Mobile Landing Page Styling - The Pinnacle of Polish & Precision
+// Mobile Landing Page Styling - The Ultimate Refinement
 //
-// This stylesheet re-engineers Discourse topic pages into a highly refined,
-// visually engaging, and perfectly clean landing page experience. Every detail,
-// from typography to shadows and button interactions, is meticulously crafted
-// for optimal mobile presentation and user engagement.
+// This stylesheet transforms Discourse topic pages into a polished,
+// minimalist, and highly effective landing page experience specifically
+// optimized for mobile devices. It prioritizes readability, clear calls-to-action,
+// and modern aesthetics through meticulous control over typography, spacing,
+// and visual elements.
 //
-// Designed for seamless integration within Discourse theme components,
-// it elevates the user interface with a modern, minimalist aesthetic.
+// Designed for integration within Discourse theme components.
 // =============================================================================
 
-// --- Core Imports & Design Tokens ---
+// --- Core Imports & Variables ---
 // Import foundational Discourse theme variables (colors, fonts, etc.)
-// These variables define the base visual language of your Discourse forum.
 @import "common/foundation/variables";
 
-// Custom Sass Design Tokens for Unmatched Consistency & Control
-// These variables provide compile-time values for Sass functions and act as
-// robust fallbacks for CSS variables, ensuring smooth compilation and
-// a consistent design system.
+// Define Sass Fallback Variables for Colors & Design Elements
+// These values are used by Sass color functions (like darken, lighten) during
+// compilation. At runtime, the CSS variables (e.g., var(--primary-action))
+// will take precedence if they are defined in your Discourse theme settings.
+// This allows for dynamic theme customization while ensuring Sass compilation.
+$primary-action-sass: #3498db;          // A vibrant blue for primary actions
+$primary-action-contrast-sass: #ffffff; // White text for contrast on primary action
+$secondary-action-sass: #2ecc71;        // A complementary green for secondary actions
+$secondary-action-contrast-sass: #ffffff; // White text for contrast on secondary action
+$tertiary-action-sass: #e74c3c;         // A more assertive red for specific actions (e.g., destructive)
+$tertiary-action-contrast-sass: #ffffff; // White text for contrast on tertiary action
+$primary-action-low-mid-sass: lighten($primary-action-sass, 20%); // Calculated lighter primary for borders/accents
 
-// Color Overrides & Fallbacks for Sass Functions
-// Ensure these match your Discourse theme's custom CSS properties for
-// --primary-action, --secondary-action, etc., or define sensible defaults.
-$color-primary-action: #3498db;          // A vibrant, inviting blue for primary calls-to-action
-$color-primary-action-contrast: #ffffff; // White text for maximum contrast on primary buttons
-$color-secondary-action: #2ecc71;        // A complementary, encouraging green for secondary actions
-$color-secondary-action-contrast: #ffffff; // White text for contrast on secondary buttons
-$color-tertiary-action: #e74c3c;         // A distinct, strong red for specific, high-attention actions
-$color-tertiary-action-contrast: #ffffff; // White text for contrast on tertiary buttons
-
-// Derived Colors for Subtle Accents and Borders
-$color-primary-action-light: lighten($color-primary-action, 20%); // For lighter accents/borders
-$color-primary-action-dark: darken($color-primary-action, 8%);    // For button hover states
-$color-secondary-action-dark: darken($color-secondary-action, 8%); // For button hover states
-$color-tertiary-action-dark: darken($color-tertiary-action, 8%);   // For button hover states
-
-// Spacing System (Modular Scale for Consistent Layouts)
+// Spacing & Global Design Tokens for Consistency
 $spacing-xxs: 4px;
 $spacing-xs: 8px;
-$spacing-sm: 12px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 32px;
-$spacing-xxl: 48px;
-$spacing-3xl: 64px;
-$spacing-4xl: 80px;
+$spacing-sm: 15px;
+$spacing-md: 20px;
+$spacing-lg: 30px;
+$spacing-xl: 40px;
+$spacing-xxl: 60px;
 
-// Border Radius System (for consistent rounded corners)
 $border-radius-sm: 4px;
 $border-radius-md: 8px;
 $border-radius-lg: 12px;
-$border-radius-pill: 9999px; // For fully rounded elements
 
-// Shadow System (for subtle depth and separation)
-// These shadows are designed to be soft, modern, and non-distracting.
-$shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
-$shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.08);
-$shadow-md: 0 5px 15px rgba(0, 0, 0, 0.1);
-$shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
-$shadow-interactive: 0 8px 20px rgba(0, 0, 0, 0.2); // For hover/active states
-
-// Transition System (for smooth interactive elements)
-$transition-base: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); // Standard smooth transition
-$transition-fast: all 0.2s ease-out; // Quicker transitions for subtle effects
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
 
 
 // --- Utility Function: str-split ---
-// Essential for dynamic category/tag class generation.
-// This function remains optimized for robust string manipulation.
-/// Splits a String into a list of substrings using `$separator`.
-/// @param {string} $string - The string to split.
-/// @param {string} $separator [null] - The string to split by.
-/// @param {number} $limit [null] - Optional limit on the number of splits to be found.
-/// @return {list} A list of substrings.
+// Splits a string into a list of substrings based on a given separator.
+// This function allows for dynamic generation of category/tag-specific classes.
+//
+// Source: Modified from pascalduez (https://gist.github.com/pascalduez/065e560c6314c7e9d7f8)
+// Original License: MIT
+// ---
 @function str-split($string, $separator: null, $limit: null) {
   $string: unquote($string);
+
   @if type-of($string) != "string" {
     @error "`str-split` function expects a string for `$string`, but received a #{type-of($string)}.";
   }
+
   $result: ();
+
   @if not $separator {
     @return ($string);
   }
+
   @if $separator == "" {
     @for $i from 1 through str-length($string) {
       $result: append($result, str-slice($string, $i, $i));
     }
     @return $result;
   }
+
   $current-string: $string;
   $separator-length: str-length($separator);
+
   @while str-index($current-string, $separator) {
     @if $limit and length($result) >= ($limit - 1) {
       $result: append($result, $current-string);
-      $current-string: "";
+      $current-string: ""; // Terminate loop
     } @else {
       $index: str-index($current-string, $separator);
       $result: append($result, str-slice($current-string, 1, ($index - 1)));
       $current-string: str-slice($current-string, ($index + $separator-length));
     }
   }
+
   @if $current-string != "" {
     $result: append($result, $current-string);
   }
+
   @if $limit and $limit > 0 and length($result) > $limit {
     $limited-result: ();
     @for $i from 1 through $limit {
@@ -111,19 +97,21 @@ $transition-fast: all 0.2s ease-out; // Quicker transitions for subtle effects
     }
     @return $limited-result;
   }
+
   @return $result;
 }
 
 
 // =============================================================================
-// Mobile Specific Styling Block - The Core Transformation
+// Mobile Specific Styling Block
 //
-// This block ensures all the landing page specific styles are applied only
-// when `$mobile_enabled` is true, keeping your desktop experience untouched.
+// This block contains all styles applied when `$mobile_enabled` is true,
+// ensuring these optimizations are compiled only for mobile environments.
 // =============================================================================
 @if $mobile_enabled == "true" {
-  // --- Dynamic Category & Tag Extension ---
-  // Connects theme settings to the core landing page styling.
+  // --- Dynamic Class Generation ---
+  // Extends base styling for specific categories and tags, allowing for
+  // targeted design adjustments if needed (though %blog-category handles most).
   $blog-categories: str-split($blog_category, ",");
   @each $category in $blog-categories {
     .category-#{$category} {
@@ -138,255 +126,250 @@ $transition-fast: all 0.2s ease-out; // Quicker transitions for subtle effects
     }
   }
 
-  // --- Base Landing Page Structure & Sectioning ---
-  // Defines the visual foundation for content blocks, giving them a distinct, card-like appearance.
+  // --- Base Landing Page Structure (Placeholder Styles) ---
+  // These styles form the foundation for a cohesive landing page look,
+  // applied consistently across category/tag contexts.
   %blog-tag,
   %blog-category {
-    // Shared styling for all major content sections.
+    // General card/section styling for key content blocks
     #topic-title,
     .blog-image-container,
     #post_1 {
-      background-color: var(--primary-background-alt); // A subtle, complementary background
+      background-color: var(--primary-background-alt); // Use a distinct background for sections
       padding: $spacing-md;                            // Consistent internal padding
-      margin-bottom: $spacing-lg;                      // Generous space between sections
-      border-radius: $border-radius-md;                // Softly rounded corners for a modern feel
-      box-shadow: $shadow-sm;                          // A delicate, ambient shadow
-      overflow: hidden;                                // Ensures content adheres to border-radius
-      transition: $transition-fast;                    // Smooth transition for any potential state changes
+      margin-bottom: $spacing-lg;                      // Ample space between sections
+      border-radius: $border-radius-md;                // Soft rounded corners
+      box-shadow: $shadow-sm;                          // Subtle shadow for depth
+      overflow: hidden;                                // Ensure content respects border-radius
     }
 
-    // --- Hero Section: The Grand Entrance ---
-    // This section acts as the primary visual and textual hook for the landing page.
+    // --- Hero Section: Topic Title ---
+    // Acts as the primary heading area, drawing immediate attention.
     #topic-title {
       text-align: center;
-      padding-top: $spacing-3xl; // Substantial top padding for impactful presence
-      padding-bottom: $spacing-xl;
+      padding-top: $spacing-xl; // More top padding for a strong hero feel
+      padding-bottom: $spacing-md;
 
       h1 {
-        font-size: 2.6em;         // Dominant heading size for immediate attention
-        line-height: 1.1;         // Tighter line-height for visual punch
-        margin-bottom: $spacing-sm; // Close tie to the subheading
-        color: var(--primary-high); // High contrast, impactful color
-        font-weight: 800;         // Extra-bold for maximum emphasis
-        letter-spacing: -0.04em;  // Fine-tuned kerning for large display text
-        text-rendering: optimizeLegibility; // Ensures crisp text rendering
+        font-size: 2.5em;         // Large, impactful heading
+        line-height: 1.15;        // Tighter line height for better visual impact
+        margin-bottom: $spacing-sm; // Space below the main heading
+        color: var(--primary-high); // Prominent text color
+        font-weight: 800;         // Extra bold for strong presence
+        letter-spacing: -0.02em;  // Slight kerning adjustment for large text
       }
-      p { // The compelling subheading or tagline.
-        color: var(--primary-medium); // Slightly subdued for hierarchical balance
-        font-size: 1.25em;          // Larger for readability and impact
-        line-height: 1.5;           // Balanced line height for comfortable reading
-        max-width: 90%;             // Constrains width for better readability on wider mobiles
-        margin: 0 auto $spacing-lg auto; // Centered with good bottom spacing
-        font-weight: 400;           // Standard weight for clear information delivery
+      p { // Designed for a compelling subtitle or brief intro
+        color: var(--primary-medium); // Slightly muted for secondary importance
+        font-size: 1.15em;
+        line-height: 1.5;
+        max-width: 90%;
+        margin: 0 auto; // Center the tagline/description
+        font-weight: 400; // Regular weight for readability
       }
-      a.edit-topic .d-icon { // Editor icon is hidden for a clean, public landing page view.
+      a.edit-topic .d-icon { // Hide default Discourse edit icon to maintain landing page aesthetic
         display: none;
       }
     }
 
-    // --- Hero Image Container: The Visual Anchor ---
-    // Provides a strong, engaging visual focal point for the landing page.
+    // --- Hero Image Container ---
+    // A prominent visual element, serving as the main hero image.
     .blog-image-container {
-      // The background image styling is handled by Discourse's theme settings.
+      // Background properties are already set for the image.
       .blog-image {
-        height: 350px;            // Ample height for a commanding visual
-        background-size: cover;   // Ensures the image fills the space, cropping as necessary
+        height: 320px;            // Generous height for impactful visual
+        background-size: cover;   // Image covers the area, cropping as needed
         border-radius: $border-radius-md; // Consistent rounded corners
-        box-shadow: $shadow-md;   // A more pronounced, elegant shadow for the main visual
+        box-shadow: $shadow-md;   // A more pronounced shadow for the hero image
       }
     }
 
-    // --- Main Content Section (Post 1): The Narrative Core ---
-    // Transforms the Discourse post into the main body of the landing page,
-    // where detailed information and calls-to-action reside.
+    // --- Main Content Section (Post 1) ---
+    // This transforms the first Discourse post into the main body of the landing page.
     #post_1 {
-      padding: $spacing-xl $spacing-lg; // Generous internal padding for spacious content flow
+      padding: $spacing-lg $spacing-md; // More generous padding for main content
 
       .topic-body {
         padding-top: 0;
 
         &.highlighted {
-          animation: none; // Disables any highlight animations for a static, clean presentation.
+          animation: none; // Disable highlighting for a clean landing page feel
         }
 
-        // Essential Discourse elements that are hidden for a focused landing page experience.
+        // Hide elements not typically found on a minimalist landing page
         .topic-avatar,
         .topic-meta-data {
           display: none;
         }
 
         .contents {
-          border-top: none;      // Removes any default top border for seamless content flow.
-          padding-top: 0;        // Ensures content starts immediately.
+          border-top: none;      // Remove default Discourse border
+          padding-top: 0;        // No top padding here
         }
 
         .cooked {
-          font-size: 1.15em;      // Base font size optimized for mobile readability.
-          line-height: 1.7;       // Optimal line height for long-form content comfort.
-          word-wrap: break-word;  // Ensures long words wrap gracefully.
-          overflow-wrap: break-word; // Modern alternative to word-wrap.
-          color: var(--primary-text); // High contrast text color.
+          font-size: 1.1em;      // Base font size for readability
+          line-height: 1.7;      // Optimal line height for long-form content
+          word-wrap: break-word; // Ensures long words break correctly
+          overflow-wrap: break-word; // Modern alternative
+          color: var(--primary-text); // Primary text color for body
 
-          // --- Interactive Buttons within Content ---
-          // Styles for links within the content that function as calls-to-action.
-          // Exclusions prevent styling of internal Discourse links or emoji.
-          a:not(.lightbox):not(.d-icon):not(.mention):not(.hashtag):not(.cooked__link-text) {
+          // --- Buttons within Content ---
+          // Styles for general links that should function as calls-to-action.
+          // Excludes common Discourse elements that aren't intended as buttons.
+          a:not(.lightbox):not(.d-icon):not(.mention):not(.hashtag):not(.cooked__link-text) { // Added cooked__link-text
             display: inline-block;
-            background-color: var(--primary-action, #{$color-primary-action});
-            color: var(--primary-action-contrast, #{$color-primary-action-contrast});
-            padding: 15px $spacing-3xl;               // Spacious padding for easy tapping.
-            text-decoration: none;                    // Removes underlines for a clean button look.
-            border-radius: $border-radius-lg;         // Smooth, inviting rounded corners.
-            font-weight: 700;                         // Bold text for prominence.
-            margin: $spacing-md $spacing-sm $spacing-md 0; // Balanced spacing around buttons.
-            transition: $transition-base;             // Smooth transitions for hover effects.
-            white-space: nowrap;                      // Prevents button text from wrapping.
-            box-shadow: $shadow-sm;                   // Subtle initial shadow for depth.
-            font-size: 1.05em;                        // Slightly larger text for buttons.
+            background-color: var(--primary-action, #{$primary-action-sass});
+            color: var(--primary-action-contrast, #{$primary-action-contrast-sass});
+            padding: 14px $spacing-xl; // Increased padding for a larger tap target
+            text-decoration: none;
+            border-radius: $border-radius-md; // Soft rounded corners
+            font-weight: bold;
+            margin: $spacing-sm $spacing-xs $spacing-sm 0; // Spacing around buttons
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            white-space: nowrap; // Prevent button text from wrapping
+            box-shadow: $shadow-sm; // Subtle shadow for buttons
 
             &:hover {
-              background-color: $color-primary-action-dark; // Darken effect using Sass variable.
-              transform: translateY(-3px) scale(1.01);      // Gentle lift and slight scale.
-              box-shadow: $shadow-interactive;              // Enhanced shadow on hover.
+              background-color: darken($primary-action-sass, 8%);
+              transform: translateY(-2px); // Subtle lift
+              box-shadow: $shadow-md;      // Enhanced shadow on hover
             }
 
-            // Secondary Button Style (apply via class="button-secondary" in HTML)
+            // Secondary Button Style (requires class="button-secondary")
             &.button-secondary {
-              background-color: var(--tertiary-action, #{$color-tertiary-action});
-              color: var(--tertiary-action-contrast, #{$color-tertiary-action-contrast});
+              background-color: var(--tertiary-action, #{$tertiary-action-sass});
+              color: var(--tertiary-action-contrast, #{$tertiary-action-contrast-sass});
               &:hover {
-                background-color: $color-tertiary-action-dark;
+                background-color: darken($tertiary-action-sass, 8%);
               }
             }
 
-            // Outline Button Style (apply via class="button-outline" in HTML)
+            // Outline Button Style (requires class="button-outline")
             &.button-outline {
                 background-color: transparent;
-                color: var(--primary-action, #{$color-primary-action});
-                border: 2px solid var(--primary-action, #{$color-primary-action});
-                box-shadow: none; // No initial shadow for outline style.
+                color: var(--primary-action, #{$primary-action-sass});
+                border: 2px solid var(--primary-action, #{$primary-action-sass});
+                box-shadow: none; // No initial shadow for outline
                 &:hover {
-                    background-color: var(--primary-action-low, $color-primary-action-light);
-                    color: var(--primary-action-contrast, #{$color-primary-action-contrast});
-                    box-shadow: $shadow-sm; // Add subtle shadow on hover.
+                    background-color: var(--primary-action-low, lighten($primary-action-sass, 40%));
+                    color: var(--primary-action-contrast, #{$primary-action-contrast-sass});
+                    box-shadow: $shadow-sm; // Add subtle shadow on hover
                 }
             }
           }
 
-          // --- Typography Refinements for Content Readability ---
-          // Drop Cap Styling for the very first letter of the content.
+          // --- Typography Refinements ---
+          // Drop Cap Styling (for first letter of the content)
           big {
-            font-size: 3rem;            // Magnified for a distinct visual start.
-            line-height: 1;             // Tightly aligns with the text flow.
-            letter-spacing: -0.02em;    // Fine-tuned kerning.
+            font-size: 2.8rem;          // More prominent drop cap
+            line-height: 1;             // Tighter line-height to fit text
+            letter-spacing: -0.01em;    // Adjust kerning for large characters
             display: inline-block;
-            font-family: 'Playfair Display', Georgia, serif; // Elegant serif font.
-            margin-right: $spacing-xs;  // Small space for visual separation.
-            color: var(--primary-action, #{$color-primary-action}); // Accent color for emphasis.
+            font-family: 'Georgia', serif; // Classic serif font for elegance
+            margin-right: $spacing-xs;  // Small space after the big letter
+            color: var(--primary-action, #{$primary-action-sass}); // Highlight color
             font-weight: bold;
           }
 
-          // Headings within the cooked content, creating clear sub-sections.
+          // Headings within the content section
           h2, h3, h4, h5, h6 {
-            font-family: var(--font-family-headings, 'Montserrat', 'Arial', sans-serif); // Modern, clean sans-serif.
-            color: var(--primary-high); // High contrast.
-            margin-top: $spacing-xl;    // Significant space above new content sections.
-            margin-bottom: $spacing-md; // Consistent space below heading.
-            line-height: 1.3;           // Optimized for readability.
-            font-weight: 700;           // Bold for clear hierarchy.
+            font-family: var(--font-family-headings, 'Roboto', 'Arial', sans-serif); // Modern sans-serif
+            color: var(--primary-high);
+            margin-top: $spacing-xl; // Ample space above new sections/subsections
+            margin-bottom: $spacing-md; // Consistent space below heading
+            line-height: 1.3;
+            font-weight: 700; // Bold headings for clear hierarchy
           }
-          h2 { font-size: 1.7em; letter-spacing: -0.015em; } // Sub-section title.
-          h3 { font-size: 1.4em; } // Content grouping title.
-          h4 { font-size: 1.15em; } // Minor heading.
+          h2 { font-size: 1.6em; letter-spacing: -0.01em; } // Sub-section title
+          h3 { font-size: 1.4em; } // Content grouping title
+          h4 { font-size: 1.2em; } // Minor heading
 
           p {
-            margin-bottom: $spacing-lg; // Generous paragraph spacing for breathability.
-            line-height: 1.75;          // Superb line height for comfortable long-form reading.
+            margin-bottom: $spacing-md; // Consistent paragraph spacing
+            line-height: 1.65;          // Optimized for long-form reading
           }
 
           ul, ol {
-            padding-left: $spacing-lg; // Indent lists for clear structure.
-            margin-bottom: $spacing-xl; // More space below lists.
+            padding-left: $spacing-lg; // Indent lists for readability
+            margin-bottom: $spacing-lg;
             li {
-              margin-bottom: $spacing-xs; // Subtle spacing between list items.
-              line-height: 1.6;           // Comfortable line height for list items.
+              margin-bottom: $spacing-xs; // Space between list items
+              line-height: 1.5;
             }
           }
 
-          // Blockquote Styling: Elegant presentation for testimonials or key quotes.
+          // Blockquote Styling - for testimonials or key quotes
           blockquote {
-            background: var(--primary-very-low);        // Soft, muted background.
-            color: var(--primary-text);                  // Standard text color.
-            border-left: 6px solid var(--primary-action-low-mid, #{$color-primary-action-light}); // Prominent accent border.
-            padding: $spacing-md $spacing-lg;            // Ample internal padding.
-            margin: $spacing-xl 0;                       // Significant vertical margin for separation.
-            border-radius: $border-radius-sm;            // Subtle rounding.
-            font-style: italic;                          // Italicized text for a classic quote feel.
-            position: relative;                          // For precise quote icon positioning.
-            box-shadow: $shadow-sm;                      // Gentle ambient shadow.
-            overflow: hidden;                            // Ensures content stays within bounds.
+            background: var(--primary-very-low);        // Soft background for quotes
+            color: var(--primary-text);                  // Standard text color
+            border-left: 5px solid var(--primary-action-low-mid, #{$primary-action-low-mid-sass}); // Accent border
+            padding: $spacing-md $spacing-lg;            // Generous internal padding
+            margin: $spacing-lg 0;                       // Vertical margin for separation
+            border-radius: $border-radius-sm;            // Subtle rounding
+            font-style: italic;                          // Italicize quoted text
+            position: relative;                          // For quote icon positioning
+            box-shadow: $shadow-sm;                      // Gentle shadow
 
-            &:before { // Large, elegant quote icon as a background element.
-              color: var(--primary-low-mid, lighten($color-primary-action, 30%));
-              content: '“';
-              font-size: 6em; // Even larger quote mark.
+            &:before { // Large, subtle quote icon
+              color: var(--primary-low-mid, lighten($primary-action-sass, 25%));
+              content: '“'; // Use a proper typographic quote character
+              font-size: 5em; // Large quote mark
               line-height: 0.1em;
               position: absolute;
               top: $spacing-sm;
               left: $spacing-sm;
-              opacity: 0.15; // Very subtle, ghostly presence.
-              font-family: serif; // Ensures classic serif for the quote mark.
-              z-index: 0; // Behind text for a layered effect.
+              opacity: 0.2; // Very subtle
+              font-family: serif; // Ensure consistent serif font for quote mark
+              z-index: 0; // Behind text
             }
             p {
-              display: inline; // Ensures paragraphs flow as one block inside quote.
-              position: relative; // Places text above the pseudo-element.
+              display: inline; // Ensures paragraphs inside blockquote flow
+              position: relative; // Above pseudo-element
               z-index: 1;
             }
           }
 
-          // --- Image Presentation within Content ---
-          // Hides redundant initial images, preventing duplication of hero image.
+          // --- Image Handling within Content ---
+          // Hide initial redundant images often copied from hero section
           & > p:first-child + div.lightbox-wrapper,
           & > p img:not(.emoji):first-child {
             display: none;
           }
 
-          // Styles for images embedded throughout the content.
+          // Display and style images embedded within content paragraphs
           & > p ~ p img:not(.emoji) {
             display: block;
             max-width: 100%;
             height: auto;
-            margin: $spacing-xl auto;   // Centered with ample vertical spacing.
-            border-radius: $border-radius-md; // Rounded corners for images.
-            box-shadow: $shadow-md;     // Clean, prominent shadow for visual pop.
+            margin: $spacing-lg auto;   // Center images with good vertical spacing
+            border-radius: $border-radius-md; // Rounded corners for images
+            box-shadow: $shadow-md;     // Prominent shadow for visual pop
           }
 
-          figure { // Enhanced styling for images with captions (figure/figcaption).
-            margin: $spacing-xl 0;
+          figure { // Styling for images wrapped in <figure> tags (e.g., with captions)
+            margin: $spacing-lg 0;
             padding: 0;
             text-align: center;
             img {
               max-width: 100%;
               height: auto;
               border-radius: $border-radius-md;
-              box-shadow: $shadow-md; // Consistent shadow.
+              box-shadow: $shadow-md; // Consistent shadow
             }
           }
 
           figcaption {
-            margin-top: $spacing-sm;           // Clear separation between image and caption.
-            font-size: 0.95em;                  // Slightly larger for readability.
-            font-weight: normal;                // Standard weight.
+            margin-top: $spacing-sm;           // Space between image and caption
+            font-size: 0.9em;
+            font-weight: normal;
             text-align: center;
-            color: var(--primary-medium);       // Subdued color for less prominence.
+            color: var(--primary-medium);
             line-height: 1.4;
           }
         }
       }
 
-      // Hide all default Discourse post controls (likes, share, reply, topic map, etc.)
-      // for a streamlined, single-purpose landing page.
+      // Hide default Discourse post controls, topic map, and admin menu for a clean landing page
       nav.post-controls,
       .topic-map,
       .post-admin-menu {
@@ -394,72 +377,67 @@ $transition-fast: all 0.2s ease-out; // Quicker transitions for subtle effects
       }
     }
 
-    // --- Dedicated Call-to-Action Section: The Conversion Catalyst ---
-    // This section is designed for maximum visual impact and user conversion.
-    // (Requires a `div class="call-to-action"` element in your HTML template).
+    // --- Dedicated Call-to-Action Section ---
+    // This section is designed to be a highly visible and compelling prompt for user action.
+    // Assumes you might add a `div class="call-to-action"` in your theme template.
     .call-to-action {
-      background-color: var(--secondary-background); // A contrasting, often vibrant background.
-      padding: $spacing-4xl $spacing-lg;              // Extremely generous padding for prominence.
+      background-color: var(--secondary-background); // A distinct, often vibrant background
+      padding: $spacing-xxl $spacing-md;              // Very generous padding for prominence
       text-align: center;
-      border-radius: $border-radius-lg;               // More pronounced rounded corners.
-      margin-top: $spacing-xxl;                       // Significant space above.
-      margin-bottom: $spacing-xxl;                    // Significant space below.
-      box-shadow: $shadow-lg;                         // Strong, encompassing shadow for a floating effect.
-      transition: $transition-base;                   // Smooth transition for any interactions.
-
-      &:hover {
-        box-shadow: $shadow-interactive; // Even stronger shadow on hover for engagement.
-      }
+      border-radius: $border-radius-lg;               // More pronounced rounded corners
+      margin-top: $spacing-xxl;                       // Large space above
+      margin-bottom: $spacing-xxl;                    // Large space below
+      box-shadow: $shadow-lg;                         // Strong shadow to make it pop
 
       h2 {
-        font-size: 2em;                               // Large, commanding heading.
-        color: var(--secondary-strong);               // High contrast, impactful color for CTA heading.
-        margin-bottom: $spacing-md;                   // Spacing below heading.
-        font-weight: 800;                             // Extra bold for authority.
+        font-size: 2em;
+        color: var(--secondary-strong);               // Strong color for CTA heading
+        margin-bottom: $spacing-md;
+        font-weight: 800;                             // Extra bold
         line-height: 1.2;
       }
 
       p {
-        color: var(--secondary-text);                 // Clear, readable text for CTA description.
-        margin-bottom: $spacing-lg;                   // Space before the button.
+        color: var(--secondary-text);                 // Text color for CTA description
+        margin-bottom: $spacing-lg;
         font-size: 1.15em;
         line-height: 1.6;
-        max-width: 90%;                               // Constrain width for readability.
+        max-width: 90%;
         margin-left: auto;
         margin-right: auto;
       }
 
-      a.button { // The hero button for the Call-to-Action section.
+      a.button { // Styles for the main CTA button within this section
         display: inline-block;
-        background-color: var(--secondary-action, #{$color-secondary-action});
-        color: var(--secondary-action-contrast, #{$color-secondary-action-contrast});
-        padding: 18px $spacing-4xl;                   // Extra large padding for maximum tap target.
+        background-color: var(--secondary-action, #{$secondary-action-sass});
+        color: var(--secondary-action-contrast, #{$secondary-action-contrast-sass});
+        padding: 18px $spacing-xxl;                   // Large padding for very easy tapping
         text-decoration: none;
-        border-radius: $border-radius-lg;             // Prominently rounded corners.
-        font-weight: bold;                            // Bold text.
-        font-size: 1.25em;                            // Larger font for commanding presence.
-        transition: $transition-base;                 // Smooth, inviting transition.
-        box-shadow: $shadow-md;                       // Initial shadow for depth.
+        border-radius: $border-radius-lg;             // More rounded corners
+        font-weight: bold;
+        font-size: 1.2em;                             // Larger font for button text
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);   // Stronger shadow for the button
 
         &:hover {
-          background-color: $color-secondary-action-dark; // Darken on hover using Sass variable.
-          transform: translateY(-5px) scale(1.02);    // More dramatic lift and slight scale.
-          box-shadow: $shadow-interactive;            // Deep, engaging shadow on hover.
+          background-color: darken($secondary-action-sass, 8%);
+          transform: translateY(-4px) scale(1.02);    // More pronounced lift and slight scale
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); // Deeper shadow on hover
         }
       }
     }
 
     // --- Minimalist Landing Page Footer ---
-    // A clean, unobtrusive footer providing essential information.
-    // (Requires a `div class="landing-page-footer"` element in your HTML template).
+    // A clean and subtle footer for copyright or light navigation.
+    // Assumes you might add a `div class="landing-page-footer"` in your theme template.
     .landing-page-footer {
       text-align: center;
       padding: $spacing-lg $spacing-md;
-      color: var(--primary-low-mid); // Muted color for less prominence.
+      color: var(--primary-low-mid);
       font-size: 0.85em;
-      border-top: 1px solid var(--primary-low); // Subtle visual separator.
-      background-color: var(--primary-background); // Matches overall background.
-      margin-top: $spacing-xxl; // Ample space from content above.
+      border-top: 1px solid var(--primary-low); // Subtle separator
+      background-color: var(--primary-background); // Matches main background
+      margin-top: $spacing-xxl; // Ensure significant space from content above
     }
   }
 }
