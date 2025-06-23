@@ -1,9 +1,13 @@
 // =============================================================================
-// Mobile Blog Styling
+// Mobile Blog Styling - Enhanced for Landing Page Aesthetic
 //
 // This stylesheet provides responsive and aesthetically optimized styles for
-// blog posts specifically on mobile devices. It includes a utility function
-// for string manipulation and applies styles based on predefined variables.
+// blog posts specifically on mobile devices, aiming for a cleaner,
+// landing page-like presentation. It includes a utility function for string
+// manipulation and applies styles based on predefined variables.
+//
+// NOTE: For a true landing page, consider adapting your HTML structure
+// to include specific sections and call-to-action elements.
 // =============================================================================
 
 // Import foundational variables, typically containing colors, typography, etc.
@@ -123,216 +127,275 @@
   // ---
   %blog-tag,
   %blog-category {
-    // Topic Title Section
+    // General section styling for a cleaner, distinct block appearance
+    #topic-title,
+    .blog-image-container,
+    #post_1 {
+      background-color: var(--primary-background-alt); // Use an alternative background for sections
+      padding: 20px;                                  // Increased padding for better visual separation
+      margin-bottom: 20px;                            // More margin between sections
+      border-radius: 8px;                             // Soft rounded corners for a modern look
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);       // Subtle shadow for depth
+    }
+
+    // Topic Title Section - treated as a hero heading
     #topic-title {
-      margin-top: 1.5em;      // Increased top margin for visual separation
-      margin-bottom: 1em;     // Space below the title before content starts
-      padding: 0 15px;        // Horizontal padding for content alignment
+      text-align: center;
+      padding-top: 30px; // More top padding for hero feel
+      padding-bottom: 20px;
 
       h1 {
-        font-size: 1.8em;     // Larger font for main title on mobile for readability
-        line-height: 1.3;     // Improved line spacing
-        margin-bottom: 0.5em; // Space below the heading
+        font-size: 2.2em;         // More impactful title for a landing page hero
+        margin-bottom: 15px;      // Space below the main heading
+        color: var(--primary);    // Use primary color for prominence
+        line-height: 1.2;         // Tighter line height for large headings
       }
-      a.edit-topic .d-icon {
-        font-size: 0.6em;     // Slightly larger icon for easier tapping
+      p { // Assuming a subtitle or tagline might be present here
+        color: var(--primary-medium); // Subdued subtitle/tagline
+        font-size: 1.1em;
+        max-width: 90%;
+        margin: 0 auto; // Center the tagline
+      }
+      a.edit-topic .d-icon { // Keep edit icon less prominent for a landing page
+        font-size: 0.5em;
+        opacity: 0.6;
+        display: none; // Often hidden on landing pages unless explicitly needed
       }
     }
 
     // Blog Hero Image Container
     .blog-image-container {
-      text-align: center;
-      margin-bottom: 1.5em;   // Space below the image
-      padding: 0;             // Ensure no extra padding, allowing full width
-
       .blog-image {
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-size: contain; // Image fits within the bounds
-        height: 250px;            // Optimized height for common mobile screen sizes
-        width: 100%;              // Ensures image takes full width
-
-        @if $image_display_style == 'responsive crop' {
-          background-size: cover; // Image covers the area, potentially cropping
-          height: 250px;          // Maintain consistent height
-        }
+        height: 300px;            // More prominent image height for hero
+        background-size: cover;   // Likely more appropriate for a landing page hero, fills space
+        border-radius: 6px;       // Maintain rounded corners
+        box-shadow: none;         // Remove shadow if parent has it, or add if desired
       }
     }
 
     // ---
-    // Styling for the First Post (Main Blog Content)
-    // Focused on improving readability and presentation of the primary article.
+    // Styling for the First Post (Main Landing Page Content)
+    // Transformed from a "post" into a main content section.
     // ---
     #post_1 {
-      padding: 0 15px; // Consistent horizontal padding for post content
+      // Internal padding is already handled by the parent section styling
+      padding: 20px; // Ensure internal content has padding
 
-      // Post Author Avatar
-      .topic-avatar {
-        height: 30px;
-        width: 30px;
-        border-top: none;
-        background: none;
-        margin-right: 8px;
-        display: inline-flex;  // Use flexbox for better avatar-flair alignment
-        align-items: center;
-
-        img.avatar {
-          height: 30px;
-          width: 30px;
-          border-radius: 50%; // Circular avatars for modern look
-        }
-
-        .avatar-flair {
-          background-size: 10px 10px; // Slightly larger flair
-          width: 1em;
-          height: 1em;
-          top: unset;
-          bottom: -3px; // Adjusted position relative to new avatar size
-          right: -3px;
-          svg {
-            height: 0.7em;
-          }
-        }
-      }
-
-      // Topic Body (main content area of the post)
       .topic-body {
         padding-top: 0; // No top padding, content starts directly below title/meta
 
         &.highlighted {
-          animation: none; // Disable highlighting animation for simplicity on mobile
+          animation: none; // Disable highlighting animation for simplicity
         }
 
+        // Hide avatar and meta information for a cleaner landing page look
+        .topic-avatar,
         .topic-meta-data {
-          display: flex;             // Use flexbox for flexible meta info layout
-          flex-wrap: wrap;           // Allow elements to wrap on very small screens
-          justify-content: space-between; // Space out meta info
-          align-items: center;       // Vertically align items
-          margin-bottom: 15px;       // More space below metadata
-          font-size: 0.8em;          // Concise font size for meta info
-
-          .names {
-            flex-grow: 1;            // Allows names to take available space
-            margin-right: 10px;      // Space between name and post info
-            .second,
-            .user-title {
-              flex-basis: auto;      // Content determines width
-              white-space: nowrap;   // Prevent wrapping of user titles
-            }
-          }
-
-          .post-infos {
-            display: flex;           // Inner flex for post date/edits
-            .post-info.edits {
-              margin-left: 10px;     // Consistent spacing
-              order: 2;              // Display edits after date
-            }
-            .post-info.post-date {
-              order: 1;              // Display date first
-            }
-          }
+          display: none;
         }
 
         .contents {
-          border-top: 1px solid var(--primary-low); // Subtle visual separator
-          padding-top: 15px;                         // Padding above content after border
+          border-top: none;      // Remove the border for a smoother flow between sections
+          padding-top: 0;        // No top padding if border is removed
+        }
+
+        .cooked {
+          font-size: 1.15em;      // Base font size for main content, enhanced readability
+          line-height: 1.7;       // Generous line height for easier reading
+          word-wrap: break-word;  // Ensure long words break correctly
+          overflow-wrap: break-word; // Modern equivalent for word-wrap
+          color: var(--primary-high); // Ensure good contrast
+
+          // --- Buttons within content ---
+          // Styles for general links that should look like buttons
+          a:not(.lightbox):not(.d-icon):not(.mention):not(.hashtag) { // Exclude common Discourse links
+            display: inline-block;
+            background-color: var(--primary-action);     // Primary call-to-action color
+            color: var(--primary-action-contrast);       // Text color on the button
+            padding: 12px 24px;
+            text-decoration: none;                       // Remove underline
+            border-radius: 6px;                          // Rounded corners for button
+            font-weight: bold;
+            margin: 10px 10px 10px 0;                    // Spacing around buttons
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            white-space: nowrap;                         // Prevent button text from wrapping
+
+            &:hover {
+              background-color: darken(var(--primary-action), 8%);
+              transform: translateY(-2px);               // Slight lift on hover
+            }
+
+            // Example of a secondary button style - requires an HTML class like "button-secondary"
+            &.button-secondary {
+              background-color: var(--tertiary-action); // A different action color
+              color: var(--tertiary-action-contrast);
+              border: 1px solid var(--tertiary-action);
+              &:hover {
+                background-color: darken(var(--tertiary-action), 8%);
+              }
+            }
+
+            // Example of an outline button style - requires an HTML class like "button-outline"
+            &.button-outline {
+                background-color: transparent;
+                color: var(--primary-action);
+                border: 2px solid var(--primary-action);
+                &:hover {
+                    background-color: var(--primary-action-low);
+                    color: var(--primary-action-contrast);
+                }
+            }
+          }
+
+          // --- Typography and Content Structure ---
+          big {
+            font-size: 2.2rem;          // Prominent first letter (drop cap style)
+            line-height: 2.2rem;
+            letter-spacing: 0.5px;      // Slightly refined letter spacing
+            display: inline-block;
+            font-family: Georgia, serif; // Classic serif font for drop cap
+            margin-right: 0.1em;        // Small space after the big letter
+            color: var(--primary-action); // Give the drop cap a highlight color
+          }
+
+          h2, h3, h4, h5, h6 {
+            font-family: var(--font-family-headings, 'Arial', sans-serif); // Use a modern sans-serif
+            color: var(--primary-high);
+            margin-top: 1.8em;        // More space before new sections
+            margin-bottom: 0.8em;
+            line-height: 1.3;
+          }
+          h2 { font-size: 1.8em; }
+          h3 { font-size: 1.5em; }
+
+          p {
+            margin-bottom: 1em; // Standard paragraph spacing
+          }
+
+          ul, ol {
+            padding-left: 25px; // Indent lists
+            margin-bottom: 1.5em;
+            li {
+              margin-bottom: 0.5em;
+            }
+          }
+
+          blockquote {
+            background: var(--primary-very-low);        // Background color for quotes
+            color: var(--primary-text);                  // Text color for quotes
+            border-left: 5px solid var(--primary-action-low-mid); // Subtle border
+            padding: 15px;                               // Internal padding
+            margin: 1.5em 0;                             // Vertical margin for separation
+            border-radius: 4px;                          // Slight rounding
+            font-style: italic;                          // Italicize quoted text
+
+            &:before { // Quote icon styling
+              color: var(--primary-action-low-mid);
+              content: open-quote;
+              font-size: 3em;
+              line-height: 0.1em;
+              vertical-align: -0.4em;
+              margin-right: 0.1em;
+              font-weight: bold;
+            }
+            p { display: inline; }
+          }
+
+          // Image handling within content
+          & > p:first-child + div.lightbox-wrapper, // Hide initial hero image duplication
+          & > p img:not(.emoji):first-child { // Hide any image that is the very first content
+            display: none;
+          }
+
+          & > p ~ p img:not(.emoji) { // Display and style images in subsequent paragraphs
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 20px auto;          // Center images with good vertical spacing
+            border-radius: 8px;         // Rounded corners for images
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); // More prominent shadow
+          }
+
+          figure { // Styling for images with figcaptions
+            margin: 1.5em 0;
+            padding: 0;
+            text-align: center;
+            img { // Ensure image inside figure is responsive
+              max-width: 100%;
+              height: auto;
+              border-radius: 8px;
+            }
+          }
+
+          figcaption {
+            margin-top: 10px;           // Space between image and caption
+            font-size: 0.9em;
+            font-weight: normal;       // Less bold, more subtle
+            text-align: center;
+            color: var(--primary-medium);
+          }
         }
       }
 
-      // Cooked HTML (parsed post content)
-      .cooked {
-        font-size: 1.1em;       // Base font size for main content, enhanced readability
-        line-height: 1.6;       // Generous line height for easier reading
-        word-wrap: break-word;  // Ensure long words break correctly
-        overflow-wrap: break-word; // Modern equivalent for word-wrap
+      // Hide default Discourse post controls, topic map, and admin menu for a cleaner landing page
+      nav.post-controls,
+      .topic-map,
+      .post-admin-menu {
+        display: none;
+      }
+    }
 
-        big {
-          font-size: 2.2rem;          // Prominent first letter (drop cap style)
-          line-height: 2.2rem;
-          letter-spacing: 0.5px;      // Slightly refined letter spacing
-          display: inline-block;
-          font-family: Georgia, serif; // Classic serif font for drop cap
-          margin-right: 0.1em;        // Small space after the big letter
-        }
+    // --- Optional: Dedicated Call-to-Action Section ---
+    // You'd typically add a div with class "call-to-action" in your HTML template
+    .call-to-action {
+      background-color: var(--secondary-background); // A distinct background color
+      padding: 30px 20px;                             // Generous padding
+      text-align: center;
+      border-radius: 8px;
+      margin-top: 30px;                               // Space above this section
+      margin-bottom: 30px;                            // Space below
 
-        // Hide the first image if it's directly after the first paragraph (often a redundant hero image)
-        & > p:first-child + div.lightbox-wrapper {
-          display: none;
-          & + p {
-            margin-top: -10px; // Adjust margin of subsequent paragraph if image is hidden
-          }
-        }
+      h2 {
+        font-size: 1.8em;
+        color: var(--secondary-strong);               // Strong color for CTA heading
+        margin-bottom: 15px;
+      }
 
-        // Hide images directly within any first-level paragraph, unless they are emojis.
-        // This is a strong rule and assumes these images are not primary content.
-        & > p img:not(.emoji) {
-          display: none;
-        }
+      p {
+        color: var(--secondary-text);                 // Text color for CTA description
+        margin-bottom: 25px;
+        font-size: 1.1em;
+      }
 
-        // Display images in subsequent paragraphs, allowing them to be content-specific visuals
-        & > p ~ p img:not(.emoji) {
-          display: block;          // Ensure images are block-level elements
-          max-width: 100%;         // Prevent images from overflowing their container
-          height: auto;            // Maintain aspect ratio
-          margin: 1em auto;        // Center images horizontally with vertical spacing
+      a.button { // Styles for a primary CTA button within this section
+        display: inline-block;
+        background-color: var(--secondary-action);    // Prominent action color
+        color: var(--secondary-action-contrast);      // Contrasting text
+        padding: 15px 30px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 1.1em;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); // Add a subtle shadow
+
+        &:hover {
+          background-color: darken(var(--secondary-action), 8%);
+          transform: translateY(-3px);
         }
       }
     }
 
-    // ---
-    // Specific Styling for the Very First Topic Post
-    // These styles apply only to the initial post in a topic (the main blog article).
-    // ---
-    .topic-post:first-child {
-      .cooked {
-        font-size: 1.15em; // Slightly larger cooked text for the main post
-        .lightbox-wrapper .meta {
-          font-size: 0.8em; // Metadata for images within the post
-        }
-      }
-
-      // Post controls and topic map (e.g., share, reply, likes)
-      nav.post-controls .actions,
-      .topic-map,
-      .post-admin-menu {
-        font-size: 0.8em; // Larger font for controls for easier tapping
-        margin-top: 1em;  // Space above controls
-      }
-
-      figure {
-        margin: 1em 0;    // Vertical margin for figures (images with captions)
-        padding: 0 5px;   // Slight horizontal padding
-      }
-
-      figcaption {
-        margin-top: 5px;          // Link caption clearly to the figure
-        font-size: 0.85em;        // Slightly larger for better readability
-        font-weight: bold;
-        text-align: center;       // Center align captions
-        color: var(--primary-medium); // Slightly muted color for less prominence
-      }
-
-      // Blockquote styling for quoted content
-      blockquote {
-        background: var(--primary-very-low);   // Background color for quotes
-        color: var(--primary-high);            // Text color for quotes
-        border-left: 8px solid var(--primary-low-mid); // Left border for visual distinction
-        padding: 1em 15px;                     // Internal padding within the blockquote
-        margin: 1.5em 0;                       // Vertical margin for separation
-
-        &:before {
-          color: var(--primary-low-mid);       // Color of the quote icon
-          content: open-quote;                 // Generates the open quote character
-          font-size: 3em;                      // Size of the quote icon
-          line-height: 0.1em;                  // Adjust line height to position icon
-          vertical-align: -0.4em;              // Vertically align icon
-          margin-right: 0.1em;                 // Small space after the quote icon
-        }
-
-        p {
-          display: inline; // Ensures paragraphs inside blockquote flow like a single block of text
-        }
-      }
+    // --- Optional: Simple Landing Page Footer ---
+    // You'd likely add a div with class "landing-page-footer" to your template
+    .landing-page-footer {
+      text-align: center;
+      padding: 25px 15px;
+      color: var(--primary-low-mid);
+      font-size: 0.9em;
+      border-top: 1px solid var(--primary-low); // Separator from content above
+      background-color: var(--primary-background); // Match main background
+      margin-top: 30px; // Ensure space
     }
   }
 }
