@@ -19,31 +19,41 @@
 // compilation. At runtime, the CSS variables (e.g., var(--primary-action))
 // will take precedence if they are defined in your Discourse theme settings.
 // This allows for dynamic theme customization while ensuring Sass compilation.
-$primary-action-sass: #3498db;          // A vibrant blue for primary actions
-$primary-action-contrast-sass: #ffffff; // White text for contrast on primary action
-$secondary-action-sass: #2ecc71;        // A complementary green for secondary actions
-$secondary-action-contrast-sass: #ffffff; // White text for contrast on secondary action
-$tertiary-action-sass: #e74c3c;         // A more assertive red for specific actions (e.g., destructive)
-$tertiary-action-contrast-sass: #ffffff; // White text for contrast on tertiary action
-$primary-action-low-mid-sass: lighten($primary-action-sass, 20%); // Calculated lighter primary for borders/accents
 
-// Spacing & Global Design Tokens for Consistency
+// Primary Brand Colors - Strong, clear, and action-oriented
+$primary-action-sass: #007bff; // A professional, accessible blue
+$primary-action-contrast-sass: #ffffff; // White text for maximum contrast on primary action
+
+// Secondary Brand Colors - Complementary, for secondary actions or accents
+$secondary-action-sass: #28a745; // A vibrant green for success/positive actions
+$secondary-action-contrast-sass: #ffffff; // White text for maximum contrast on secondary action
+
+// Tertiary Action Color - For less frequent or distinct actions (e.g., outline buttons)
+$tertiary-action-sass: #6c757d; // A neutral grey for subtle actions
+$tertiary-action-contrast-sass: #ffffff; // White text for contrast
+
+// Calculated Colors - For gradients, borders, subtle backgrounds
+$primary-action-low-mid-sass: lighten($primary-action-sass, 25%); // Lighter primary for accents/borders
+$primary-action-low-sass: lighten($primary-action-sass, 45%); // Very light primary for subtle hover states
+
+// Spacing & Global Design Tokens for Consistency and Responsiveness
 $spacing-xxs: 4px;
 $spacing-xs: 8px;
-$spacing-sm: 15px;
+$spacing-sm: 12px; // Adjusted for slightly more breathing room
 $spacing-md: 20px;
-$spacing-lg: 30px;
-$spacing-xl: 40px;
-$spacing-xxl: 60px;
+$spacing-lg: 32px; // Increased for clearer separation
+$spacing-xl: 48px; // Significant spacing for major sections
+$spacing-xxl: 72px; // Ample space for hero and CTA sections
 
+// Border Radii - Soft and modern
 $border-radius-sm: 4px;
 $border-radius-md: 8px;
 $border-radius-lg: 12px;
 
-$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
-$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-
+// Shadows - For depth and emphasis
+$shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1); // Slightly more prominent
+$shadow-md: 0 5px 15px rgba(0, 0, 0, 0.15); // Enhanced for hero images/main elements
+$shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.2); // Stronger for prominent CTA
 
 // --- Utility Function: str-split ---
 // Splits a string into a list of substrings based on a given separator.
@@ -101,7 +111,6 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
   @return $result;
 }
 
-
 // =============================================================================
 // Mobile Specific Styling Block
 //
@@ -136,11 +145,11 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
     .blog-image-container,
     #post_1 {
       background-color: var(--primary-background-alt); // Use a distinct background for sections
-      padding: $spacing-md;                            // Consistent internal padding
-      margin-bottom: $spacing-lg;                      // Ample space between sections
-      border-radius: $border-radius-md;                // Soft rounded corners
-      box-shadow: $shadow-sm;                          // Subtle shadow for depth
-      overflow: hidden;                                // Ensure content respects border-radius
+      padding: $spacing-md; // Consistent internal padding
+      margin-bottom: $spacing-lg; // Ample space between sections
+      border-radius: $border-radius-md; // Soft rounded corners
+      box-shadow: $shadow-sm; // Subtle shadow for depth
+      overflow: hidden; // Ensure content respects border-radius
     }
 
     // --- Hero Section: Topic Title ---
@@ -151,22 +160,24 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
       padding-bottom: $spacing-md;
 
       h1 {
-        font-size: 2.5em;         // Large, impactful heading
-        line-height: 1.15;        // Tighter line height for better visual impact
+        font-size: 2.8em; // Larger, more impactful heading
+        line-height: 1.1; // Tighter line height for better visual impact
         margin-bottom: $spacing-sm; // Space below the main heading
         color: var(--primary-high); // Prominent text color
-        font-weight: 800;         // Extra bold for strong presence
-        letter-spacing: -0.02em;  // Slight kerning adjustment for large text
+        font-weight: 800; // Extra bold for strong presence
+        letter-spacing: -0.03em; // Slight kerning adjustment for large text
       }
-      p { // Designed for a compelling subtitle or brief intro
+      p {
+        // Designed for a compelling subtitle or brief intro
         color: var(--primary-medium); // Slightly muted for secondary importance
-        font-size: 1.15em;
-        line-height: 1.5;
+        font-size: 1.25em; // Larger subtitle for readability
+        line-height: 1.4;
         max-width: 90%;
         margin: 0 auto; // Center the tagline/description
         font-weight: 400; // Regular weight for readability
       }
-      a.edit-topic .d-icon { // Hide default Discourse edit icon to maintain landing page aesthetic
+      a.edit-topic .d-icon {
+        // Hide default Discourse edit icon to maintain landing page aesthetic
         display: none;
       }
     }
@@ -176,10 +187,11 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
     .blog-image-container {
       // Background properties are already set for the image.
       .blog-image {
-        height: 320px;            // Generous height for impactful visual
-        background-size: cover;   // Image covers the area, cropping as needed
+        height: 350px; // Generous height for impactful visual
+        background-size: cover; // Image covers the area, cropping as needed
+        background-position: center; // Center the image for better cropping
         border-radius: $border-radius-md; // Consistent rounded corners
-        box-shadow: $shadow-md;   // A more pronounced shadow for the hero image
+        box-shadow: $shadow-md; // A more pronounced shadow for the hero image
       }
     }
 
@@ -202,13 +214,13 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
 
         .contents {
-          border-top: none;      // Remove default Discourse border
-          padding-top: 0;        // No top padding here
+          border-top: none; // Remove default Discourse border
+          padding-top: 0; // No top padding here
         }
 
         .cooked {
-          font-size: 1.1em;      // Base font size for readability
-          line-height: 1.7;      // Optimal line height for long-form content
+          font-size: 1.15em; // Base font size for readability
+          line-height: 1.75; // Optimal line height for long-form content
           word-wrap: break-word; // Ensures long words break correctly
           overflow-wrap: break-word; // Modern alternative
           color: var(--primary-text); // Primary text color for body
@@ -216,11 +228,11 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
           // --- Buttons within Content ---
           // Styles for general links that should function as calls-to-action.
           // Excludes common Discourse elements that aren't intended as buttons.
-          a:not(.lightbox):not(.d-icon):not(.mention):not(.hashtag):not(.cooked__link-text) { // Added cooked__link-text
+          a:not(.lightbox):not(.d-icon):not(.mention):not(.hashtag):not(.cooked__link-text) {
             display: inline-block;
             background-color: var(--primary-action, #{$primary-action-sass});
             color: var(--primary-action-contrast, #{$primary-action-contrast-sass});
-            padding: 14px $spacing-xl; // Increased padding for a larger tap target
+            padding: 16px $spacing-xl; // Increased padding for a larger tap target
             text-decoration: none;
             border-radius: $border-radius-md; // Soft rounded corners
             font-weight: bold;
@@ -228,11 +240,12 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             white-space: nowrap; // Prevent button text from wrapping
             box-shadow: $shadow-sm; // Subtle shadow for buttons
+            font-size: 1.05em; // Slightly larger font for clarity
 
             &:hover {
               background-color: darken($primary-action-sass, 8%);
               transform: translateY(-2px); // Subtle lift
-              box-shadow: $shadow-md;      // Enhanced shadow on hover
+              box-shadow: $shadow-md; // Enhanced shadow on hover
             }
 
             // Secondary Button Style (requires class="button-secondary")
@@ -246,27 +259,27 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
 
             // Outline Button Style (requires class="button-outline")
             &.button-outline {
-                background-color: transparent;
-                color: var(--primary-action, #{$primary-action-sass});
-                border: 2px solid var(--primary-action, #{$primary-action-sass});
-                box-shadow: none; // No initial shadow for outline
-                &:hover {
-                    background-color: var(--primary-action-low, lighten($primary-action-sass, 40%));
-                    color: var(--primary-action-contrast, #{$primary-action-contrast-sass});
-                    box-shadow: $shadow-sm; // Add subtle shadow on hover
-                }
+              background-color: transparent;
+              color: var(--primary-action, #{$primary-action-sass});
+              border: 2px solid var(--primary-action, #{$primary-action-sass});
+              box-shadow: none; // No initial shadow for outline
+              &:hover {
+                background-color: var(--primary-action-low, #{$primary-action-low-sass});
+                color: var(--primary-action-contrast, #{$primary-action-contrast-sass});
+                box-shadow: $shadow-sm; // Add subtle shadow on hover
+              }
             }
           }
 
           // --- Typography Refinements ---
           // Drop Cap Styling (for first letter of the content)
           big {
-            font-size: 2.8rem;          // More prominent drop cap
-            line-height: 1;             // Tighter line-height to fit text
-            letter-spacing: -0.01em;    // Adjust kerning for large characters
+            font-size: 3rem; // More prominent drop cap
+            line-height: 1; // Tighter line-height to fit text
+            letter-spacing: -0.01em; // Adjust kerning for large characters
             display: inline-block;
             font-family: 'Georgia', serif; // Classic serif font for elegance
-            margin-right: $spacing-xs;  // Small space after the big letter
+            margin-right: $spacing-xs; // Small space after the big letter
             color: var(--primary-action, #{$primary-action-sass}); // Highlight color
             font-weight: bold;
           }
@@ -280,13 +293,20 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
             line-height: 1.3;
             font-weight: 700; // Bold headings for clear hierarchy
           }
-          h2 { font-size: 1.6em; letter-spacing: -0.01em; } // Sub-section title
-          h3 { font-size: 1.4em; } // Content grouping title
-          h4 { font-size: 1.2em; } // Minor heading
+          h2 {
+            font-size: 1.8em;
+            letter-spacing: -0.01em;
+          } // Sub-section title
+          h3 {
+            font-size: 1.5em;
+          } // Content grouping title
+          h4 {
+            font-size: 1.3em;
+          } // Minor heading
 
           p {
             margin-bottom: $spacing-md; // Consistent paragraph spacing
-            line-height: 1.65;          // Optimized for long-form reading
+            line-height: 1.65; // Optimized for long-form reading
           }
 
           ul, ol {
@@ -294,31 +314,32 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
             margin-bottom: $spacing-lg;
             li {
               margin-bottom: $spacing-xs; // Space between list items
-              line-height: 1.5;
+              line-height: 1.6; // Improved line height for list items
             }
           }
 
           // Blockquote Styling - for testimonials or key quotes
           blockquote {
-            background: var(--primary-very-low);        // Soft background for quotes
-            color: var(--primary-text);                  // Standard text color
-            border-left: 5px solid var(--primary-action-low-mid, #{$primary-action-low-mid-sass}); // Accent border
-            padding: $spacing-md $spacing-lg;            // Generous internal padding
-            margin: $spacing-lg 0;                       // Vertical margin for separation
-            border-radius: $border-radius-sm;            // Subtle rounding
-            font-style: italic;                          // Italicize quoted text
-            position: relative;                          // For quote icon positioning
-            box-shadow: $shadow-sm;                      // Gentle shadow
+            background: var(--primary-very-low); // Soft background for quotes
+            color: var(--primary-text); // Standard text color
+            border-left: 6px solid var(--primary-action-low-mid, #{$primary-action-low-mid-sass}); // Thicker accent border
+            padding: $spacing-md $spacing-lg; // Generous internal padding
+            margin: $spacing-lg 0; // Vertical margin for separation
+            border-radius: $border-radius-sm; // Subtle rounding
+            font-style: italic; // Italicize quoted text
+            position: relative; // For quote icon positioning
+            box-shadow: $shadow-sm; // Gentle shadow
 
-            &:before { // Large, subtle quote icon
-              color: var(--primary-low-mid, lighten($primary-action-sass, 25%));
+            &:before {
+              // Large, subtle quote icon
+              color: var(--primary-low-mid, lighten($primary-action-sass, 30%)); // Lighter for subtlety
               content: '“'; // Use a proper typographic quote character
-              font-size: 5em; // Large quote mark
+              font-size: 6em; // Larger quote mark
               line-height: 0.1em;
               position: absolute;
               top: $spacing-sm;
               left: $spacing-sm;
-              opacity: 0.2; // Very subtle
+              opacity: 0.15; // More subtle
               font-family: serif; // Ensure consistent serif font for quote mark
               z-index: 0; // Behind text
             }
@@ -341,12 +362,13 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
             display: block;
             max-width: 100%;
             height: auto;
-            margin: $spacing-lg auto;   // Center images with good vertical spacing
+            margin: $spacing-lg auto; // Center images with good vertical spacing
             border-radius: $border-radius-md; // Rounded corners for images
-            box-shadow: $shadow-md;     // Prominent shadow for visual pop
+            box-shadow: $shadow-md; // Prominent shadow for visual pop
           }
 
-          figure { // Styling for images wrapped in <figure> tags (e.g., with captions)
+          figure {
+            // Styling for images wrapped in <figure> tags (e.g., with captions)
             margin: $spacing-lg 0;
             padding: 0;
             text-align: center;
@@ -359,12 +381,12 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
           }
 
           figcaption {
-            margin-top: $spacing-sm;           // Space between image and caption
-            font-size: 0.9em;
+            margin-top: $spacing-sm; // Space between image and caption
+            font-size: 0.95em; // Slightly larger for readability
             font-weight: normal;
             text-align: center;
             color: var(--primary-medium);
-            line-height: 1.4;
+            line-height: 1.5;
           }
         }
       }
@@ -382,47 +404,48 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
     // Assumes you might add a `div class="call-to-action"` in your theme template.
     .call-to-action {
       background-color: var(--secondary-background); // A distinct, often vibrant background
-      padding: $spacing-xxl $spacing-md;              // Very generous padding for prominence
+      padding: $spacing-xxl $spacing-md; // Very generous padding for prominence
       text-align: center;
-      border-radius: $border-radius-lg;               // More pronounced rounded corners
-      margin-top: $spacing-xxl;                       // Large space above
-      margin-bottom: $spacing-xxl;                    // Large space below
-      box-shadow: $shadow-lg;                         // Strong shadow to make it pop
+      border-radius: $border-radius-lg; // More pronounced rounded corners
+      margin-top: $spacing-xxl; // Large space above
+      margin-bottom: $spacing-xxl; // Large space below
+      box-shadow: $shadow-lg; // Strong shadow to make it pop
 
       h2 {
-        font-size: 2em;
-        color: var(--secondary-strong);               // Strong color for CTA heading
+        font-size: 2.2em; // Larger for main CTA heading
+        color: var(--secondary-strong); // Strong color for CTA heading
         margin-bottom: $spacing-md;
-        font-weight: 800;                             // Extra bold
-        line-height: 1.2;
+        font-weight: 800; // Extra bold
+        line-height: 1.15;
       }
 
       p {
-        color: var(--secondary-text);                 // Text color for CTA description
+        color: var(--secondary-text); // Text color for CTA description
         margin-bottom: $spacing-lg;
-        font-size: 1.15em;
+        font-size: 1.2em; // Larger for better readability
         line-height: 1.6;
         max-width: 90%;
         margin-left: auto;
         margin-right: auto;
       }
 
-      a.button { // Styles for the main CTA button within this section
+      a.button {
+        // Styles for the main CTA button within this section
         display: inline-block;
         background-color: var(--secondary-action, #{$secondary-action-sass});
         color: var(--secondary-action-contrast, #{$secondary-action-contrast-sass});
-        padding: 18px $spacing-xxl;                   // Large padding for very easy tapping
+        padding: 20px $spacing-xxl; // Large padding for very easy tapping
         text-decoration: none;
-        border-radius: $border-radius-lg;             // More rounded corners
+        border-radius: $border-radius-lg; // More rounded corners
         font-weight: bold;
-        font-size: 1.2em;                             // Larger font for button text
+        font-size: 1.3em; // Larger font for button text
         transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);   // Stronger shadow for the button
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); // Stronger shadow for the button
 
         &:hover {
           background-color: darken($secondary-action-sass, 8%);
-          transform: translateY(-4px) scale(1.02);    // More pronounced lift and slight scale
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); // Deeper shadow on hover
+          transform: translateY(-4px) scale(1.02); // More pronounced lift and slight scale
+          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4); // Deeper shadow on hover
         }
       }
     }
@@ -434,7 +457,7 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
       text-align: center;
       padding: $spacing-lg $spacing-md;
       color: var(--primary-low-mid);
-      font-size: 0.85em;
+      font-size: 0.9em; // Slightly larger for readability
       border-top: 1px solid var(--primary-low); // Subtle separator
       background-color: var(--primary-background); // Matches main background
       margin-top: $spacing-xxl; // Ensure significant space from content above
