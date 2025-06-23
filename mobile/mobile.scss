@@ -1,72 +1,70 @@
 // =============================================================================
-// Mobile Blog Styling - Enhanced for Landing Page Aesthetic
+// Mobile Landing Page Styling - The Ultimate Refinement
 //
-// This stylesheet provides responsive and aesthetically optimized styles for
-// blog posts specifically on mobile devices, aiming for a cleaner,
-// landing page-like presentation. It includes a utility function for string
-// manipulation and applies styles based on predefined variables.
+// This stylesheet transforms Discourse topic pages into a polished,
+// minimalist, and highly effective landing page experience specifically
+// optimized for mobile devices. It prioritizes readability, clear calls-to-action,
+// and modern aesthetics through meticulous control over typography, spacing,
+// and visual elements.
 //
-// NOTE: For a true landing page, consider adapting your HTML structure
-// to include specific sections and call-to-action elements.
+// Designed for integration within Discourse theme components.
 // =============================================================================
 
-// Import foundational variables, typically containing colors, typography, etc.
+// --- Core Imports & Variables ---
+// Import foundational Discourse theme variables (colors, fonts, etc.)
 @import "common/foundation/variables";
 
-// ---
-// Define Sass Fallback Variables for Colors
-// These values are used by Sass color functions (like darken, lighten) during compilation.
-// At runtime, the CSS variables (e.g., var(--primary-action)) will take precedence
-// if they are defined in your theme.
-// ---
-$primary-action-sass: #3498db;          // Example: A default blue for primary actions
-$primary-action-contrast-sass: #ffffff; // Example: White for text on primary action
-$secondary-action-sass: #2ecc71;        // Example: A default green for secondary actions
-$secondary-action-contrast-sass: #ffffff; // Example: White for text on secondary action
-$tertiary-action-sass: #e74c3c;         // Example: A default red for tertiary actions (like outline hover)
-$tertiary-action-contrast-sass: #ffffff; // Example: White for text on tertiary action
+// Define Sass Fallback Variables for Colors & Design Elements
+// These values are used by Sass color functions (like darken, lighten) during
+// compilation. At runtime, the CSS variables (e.g., var(--primary-action))
+// will take precedence if they are defined in your Discourse theme settings.
+// This allows for dynamic theme customization while ensuring Sass compilation.
+$primary-action-sass: #3498db;          // A vibrant blue for primary actions
+$primary-action-contrast-sass: #ffffff; // White text for contrast on primary action
+$secondary-action-sass: #2ecc71;        // A complementary green for secondary actions
+$secondary-action-contrast-sass: #ffffff; // White text for contrast on secondary action
+$tertiary-action-sass: #e74c3c;         // A more assertive red for specific actions (e.g., destructive)
+$tertiary-action-contrast-sass: #ffffff; // White text for contrast on tertiary action
+$primary-action-low-mid-sass: lighten($primary-action-sass, 20%); // Calculated lighter primary for borders/accents
 
-// ---
-// Utility Function: str-split
-//
+// Spacing & Global Design Tokens for Consistency
+$spacing-xxs: 4px;
+$spacing-xs: 8px;
+$spacing-sm: 15px;
+$spacing-md: 20px;
+$spacing-lg: 30px;
+$spacing-xl: 40px;
+$spacing-xxl: 60px;
+
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+
+// --- Utility Function: str-split ---
 // Splits a string into a list of substrings based on a given separator.
-// This function enhances dynamic styling by allowing variable-driven class generation.
+// This function allows for dynamic generation of category/tag-specific classes.
 //
 // Source: Modified from pascalduez (https://gist.github.com/pascalduez/065e560c6314c7e9d7f8)
 // Original License: MIT
 // ---
-/// Splits a String into a list of substrings using `$separator`.
-///
-/// If `$separator` is omitted, the list returned contains one element consisting of the entire string.
-/// If `$separator` is an empty string, the string is converted to a list of all characters.
-/// An optional `$limit` can truncate the returned list to a maximum number of elements.
-///
-/// @param {string} $string - The string to split.
-/// @param {string} $separator [null] - The string to split by.
-/// @param {number} $limit [null] - Optional limit on the number of splits to be found.
-///
-/// @return {list} A list of substrings.
-///
-/// @example
-///   str-split("apple,banana,orange", ",") => ("apple", "banana", "orange")
-///   str-split("hello", "")             => ("h", "e", "l", "l", "o")
-///   str-split("one-two-three", "-", 2) => ("one", "two-three")
 @function str-split($string, $separator: null, $limit: null) {
-  $string: unquote($string); // Ensure string is unquoted for processing
+  $string: unquote($string);
 
-  // Error handling for incorrect input type
   @if type-of($string) != "string" {
     @error "`str-split` function expects a string for `$string`, but received a #{type-of($string)}.";
   }
 
-  $result: (); // Initialize an empty list to store results
+  $result: ();
 
-  // Handle case where no separator is provided
   @if not $separator {
-    @return ($string); // Return the entire string as a single-element list
+    @return ($string);
   }
 
-  // Handle case where separator is an empty string (split into characters)
   @if $separator == "" {
     @for $i from 1 through str-length($string) {
       $result: append($result, str-slice($string, $i, $i));
@@ -74,52 +72,46 @@ $tertiary-action-contrast-sass: #ffffff; // Example: White for text on tertiary 
     @return $result;
   }
 
-  // Main splitting logic
   $current-string: $string;
   $separator-length: str-length($separator);
 
   @while str-index($current-string, $separator) {
-    // If a limit is set and we're approaching it, append the rest and terminate the loop
     @if $limit and length($result) >= ($limit - 1) {
       $result: append($result, $current-string);
-      $current-string: ""; // Clear to exit the loop
+      $current-string: ""; // Terminate loop
     } @else {
-      // Find the separator and slice the string
       $index: str-index($current-string, $separator);
       $result: append($result, str-slice($current-string, 1, ($index - 1)));
       $current-string: str-slice($current-string, ($index + $separator-length));
     }
   }
 
-  // Append any remaining part of the string after the last separator
   @if $current-string != "" {
     $result: append($result, $current-string);
   }
 
-  // Apply the limit after all splits, if the limit was not handled earlier
   @if $limit and $limit > 0 and length($result) > $limit {
     $limited-result: ();
     @for $i from 1 through $limit {
-      $return: append($return, nth($result, $i));
+      $limited-result: append($limited-result, nth($result, $i));
     }
-    @return $return;
+    @return $limited-result;
   }
 
   @return $result;
 }
 
+
 // =============================================================================
-// Mobile Specific Blog Styling
+// Mobile Specific Styling Block
 //
-// Applies styles only when the `$mobile_enabled` variable is true, ensuring
-// these styles compile only for mobile contexts.
+// This block contains all styles applied when `$mobile_enabled` is true,
+// ensuring these optimizations are compiled only for mobile environments.
 // =============================================================================
 @if $mobile_enabled == "true" {
-  // ---
-  // Dynamic Class Generation for Categories and Tags
-  // Creates classes like `.category-news`, `.tag-css`, etc., and extends
-  // the base blog styling placeholders.
-  // ---
+  // --- Dynamic Class Generation ---
+  // Extends base styling for specific categories and tags, allowing for
+  // targeted design adjustments if needed (though %blog-category handles most).
   $blog-categories: str-split($blog_category, ",");
   @each $category in $blog-categories {
     .category-#{$category} {
@@ -134,223 +126,250 @@ $tertiary-action-contrast-sass: #ffffff; // Example: White for text on tertiary 
     }
   }
 
-  // ---
-  // Base Placeholder Styles for Blog Categories and Tags
-  // These styles are shared by all dynamically generated category and tag classes.
-  // ---
+  // --- Base Landing Page Structure (Placeholder Styles) ---
+  // These styles form the foundation for a cohesive landing page look,
+  // applied consistently across category/tag contexts.
   %blog-tag,
   %blog-category {
-    // General section styling for a cleaner, distinct block appearance
+    // General card/section styling for key content blocks
     #topic-title,
     .blog-image-container,
     #post_1 {
-      background-color: var(--primary-background-alt); // Use an alternative background for sections
-      padding: 20px;                                  // Increased padding for better visual separation
-      margin-bottom: 20px;                            // More margin between sections
-      border-radius: 8px;                             // Soft rounded corners for a modern look
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);       // Subtle shadow for depth
+      background-color: var(--primary-background-alt); // Use a distinct background for sections
+      padding: $spacing-md;                            // Consistent internal padding
+      margin-bottom: $spacing-lg;                      // Ample space between sections
+      border-radius: $border-radius-md;                // Soft rounded corners
+      box-shadow: $shadow-sm;                          // Subtle shadow for depth
+      overflow: hidden;                                // Ensure content respects border-radius
     }
 
-    // Topic Title Section - treated as a hero heading
+    // --- Hero Section: Topic Title ---
+    // Acts as the primary heading area, drawing immediate attention.
     #topic-title {
       text-align: center;
-      padding-top: 30px; // More top padding for hero feel
-      padding-bottom: 20px;
+      padding-top: $spacing-xl; // More top padding for a strong hero feel
+      padding-bottom: $spacing-md;
 
       h1 {
-        font-size: 2.2em;         // More impactful title for a landing page hero
-        margin-bottom: 15px;      // Space below the main heading
-        color: var(--primary);    // Use primary color for prominence
-        line-height: 1.2;         // Tighter line height for large headings
+        font-size: 2.5em;         // Large, impactful heading
+        line-height: 1.15;        // Tighter line height for better visual impact
+        margin-bottom: $spacing-sm; // Space below the main heading
+        color: var(--primary-high); // Prominent text color
+        font-weight: 800;         // Extra bold for strong presence
+        letter-spacing: -0.02em;  // Slight kerning adjustment for large text
       }
-      p { // Assuming a subtitle or tagline might be present here
-        color: var(--primary-medium); // Subdued subtitle/tagline
-        font-size: 1.1em;
+      p { // Designed for a compelling subtitle or brief intro
+        color: var(--primary-medium); // Slightly muted for secondary importance
+        font-size: 1.15em;
+        line-height: 1.5;
         max-width: 90%;
-        margin: 0 auto; // Center the tagline
+        margin: 0 auto; // Center the tagline/description
+        font-weight: 400; // Regular weight for readability
       }
-      a.edit-topic .d-icon { // Keep edit icon less prominent for a landing page
-        font-size: 0.5em;
-        opacity: 0.6;
-        display: none; // Often hidden on landing pages unless explicitly needed
+      a.edit-topic .d-icon { // Hide default Discourse edit icon to maintain landing page aesthetic
+        display: none;
       }
     }
 
-    // Blog Hero Image Container
+    // --- Hero Image Container ---
+    // A prominent visual element, serving as the main hero image.
     .blog-image-container {
+      // Background properties are already set for the image.
       .blog-image {
-        height: 300px;            // More prominent image height for hero
-        background-size: cover;   // Likely more appropriate for a landing page hero, fills space
-        border-radius: 6px;       // Maintain rounded corners
-        box-shadow: none;         // Remove shadow if parent has it, or add if desired
+        height: 320px;            // Generous height for impactful visual
+        background-size: cover;   // Image covers the area, cropping as needed
+        border-radius: $border-radius-md; // Consistent rounded corners
+        box-shadow: $shadow-md;   // A more pronounced shadow for the hero image
       }
     }
 
-    // ---
-    // Styling for the First Post (Main Landing Page Content)
-    // Transformed from a "post" into a main content section.
-    // ---
+    // --- Main Content Section (Post 1) ---
+    // This transforms the first Discourse post into the main body of the landing page.
     #post_1 {
-      // Internal padding is already handled by the parent section styling
-      padding: 20px; // Ensure internal content has padding
+      padding: $spacing-lg $spacing-md; // More generous padding for main content
 
       .topic-body {
-        padding-top: 0; // No top padding, content starts directly below title/meta
+        padding-top: 0;
 
         &.highlighted {
-          animation: none; // Disable highlighting animation for simplicity
+          animation: none; // Disable highlighting for a clean landing page feel
         }
 
-        // Hide avatar and meta information for a cleaner landing page look
+        // Hide elements not typically found on a minimalist landing page
         .topic-avatar,
         .topic-meta-data {
           display: none;
         }
 
         .contents {
-          border-top: none;      // Remove the border for a smoother flow between sections
-          padding-top: 0;        // No top padding if border is removed
+          border-top: none;      // Remove default Discourse border
+          padding-top: 0;        // No top padding here
         }
 
         .cooked {
-          font-size: 1.15em;      // Base font size for main content, enhanced readability
-          line-height: 1.7;       // Generous line height for easier reading
-          word-wrap: break-word;  // Ensure long words break correctly
-          overflow-wrap: break-word; // Modern equivalent for word-wrap
-          color: var(--primary-high); // Ensure good contrast
+          font-size: 1.1em;      // Base font size for readability
+          line-height: 1.7;      // Optimal line height for long-form content
+          word-wrap: break-word; // Ensures long words break correctly
+          overflow-wrap: break-word; // Modern alternative
+          color: var(--primary-text); // Primary text color for body
 
-          // --- Buttons within content ---
-          // Styles for general links that should look like buttons
-          a:not(.lightbox):not(.d-icon):not(.mention):not(.hashtag) { // Exclude common Discourse links
+          // --- Buttons within Content ---
+          // Styles for general links that should function as calls-to-action.
+          // Excludes common Discourse elements that aren't intended as buttons.
+          a:not(.lightbox):not(.d-icon):not(.mention):not(.hashtag):not(.cooked__link-text) { // Added cooked__link-text
             display: inline-block;
-            background-color: var(--primary-action, #{$primary-action-sass}); // Use CSS var, fallback to Sass var
-            color: var(--primary-action-contrast, #{$primary-action-contrast-sass}); // Use CSS var, fallback to Sass var
-            padding: 12px 24px;
-            text-decoration: none;                       // Remove underline
-            border-radius: 6px;                          // Rounded corners for button
+            background-color: var(--primary-action, #{$primary-action-sass});
+            color: var(--primary-action-contrast, #{$primary-action-contrast-sass});
+            padding: 14px $spacing-xl; // Increased padding for a larger tap target
+            text-decoration: none;
+            border-radius: $border-radius-md; // Soft rounded corners
             font-weight: bold;
-            margin: 10px 10px 10px 0;                    // Spacing around buttons
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            white-space: nowrap;                         // Prevent button text from wrapping
+            margin: $spacing-sm $spacing-xs $spacing-sm 0; // Spacing around buttons
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            white-space: nowrap; // Prevent button text from wrapping
+            box-shadow: $shadow-sm; // Subtle shadow for buttons
 
             &:hover {
-              background-color: darken($primary-action-sass, 8%); // Use Sass var here for darken()
-              transform: translateY(-2px);               // Slight lift on hover
+              background-color: darken($primary-action-sass, 8%);
+              transform: translateY(-2px); // Subtle lift
+              box-shadow: $shadow-md;      // Enhanced shadow on hover
             }
 
-            // Example of a secondary button style - requires an HTML class like "button-secondary"
+            // Secondary Button Style (requires class="button-secondary")
             &.button-secondary {
-              background-color: var(--tertiary-action, #{$tertiary-action-sass}); // Use CSS var, fallback to Sass var
+              background-color: var(--tertiary-action, #{$tertiary-action-sass});
               color: var(--tertiary-action-contrast, #{$tertiary-action-contrast-sass});
-              border: 1px solid var(--tertiary-action, #{$tertiary-action-sass});
               &:hover {
-                background-color: darken($tertiary-action-sass, 8%); // Use Sass var here for darken()
+                background-color: darken($tertiary-action-sass, 8%);
               }
             }
 
-            // Example of an outline button style - requires an HTML class like "button-outline"
+            // Outline Button Style (requires class="button-outline")
             &.button-outline {
                 background-color: transparent;
                 color: var(--primary-action, #{$primary-action-sass});
                 border: 2px solid var(--primary-action, #{$primary-action-sass});
+                box-shadow: none; // No initial shadow for outline
                 &:hover {
-                    background-color: var(--primary-action-low, lighten($primary-action-sass, 40%)); // Use a Sass lightened version as fallback
+                    background-color: var(--primary-action-low, lighten($primary-action-sass, 40%));
                     color: var(--primary-action-contrast, #{$primary-action-contrast-sass});
+                    box-shadow: $shadow-sm; // Add subtle shadow on hover
                 }
             }
           }
 
-          // --- Typography and Content Structure ---
+          // --- Typography Refinements ---
+          // Drop Cap Styling (for first letter of the content)
           big {
-            font-size: 2.2rem;          // Prominent first letter (drop cap style)
-            line-height: 2.2rem;
-            letter-spacing: 0.5px;      // Slightly refined letter spacing
+            font-size: 2.8rem;          // More prominent drop cap
+            line-height: 1;             // Tighter line-height to fit text
+            letter-spacing: -0.01em;    // Adjust kerning for large characters
             display: inline-block;
-            font-family: Georgia, serif; // Classic serif font for drop cap
-            margin-right: 0.1em;        // Small space after the big letter
-            color: var(--primary-action, #{$primary-action-sass}); // Give the drop cap a highlight color
+            font-family: 'Georgia', serif; // Classic serif font for elegance
+            margin-right: $spacing-xs;  // Small space after the big letter
+            color: var(--primary-action, #{$primary-action-sass}); // Highlight color
+            font-weight: bold;
           }
 
+          // Headings within the content section
           h2, h3, h4, h5, h6 {
-            font-family: var(--font-family-headings, 'Arial', sans-serif); // Use a modern sans-serif
+            font-family: var(--font-family-headings, 'Roboto', 'Arial', sans-serif); // Modern sans-serif
             color: var(--primary-high);
-            margin-top: 1.8em;        // More space before new sections
-            margin-bottom: 0.8em;
+            margin-top: $spacing-xl; // Ample space above new sections/subsections
+            margin-bottom: $spacing-md; // Consistent space below heading
             line-height: 1.3;
+            font-weight: 700; // Bold headings for clear hierarchy
           }
-          h2 { font-size: 1.8em; }
-          h3 { font-size: 1.5em; }
+          h2 { font-size: 1.6em; letter-spacing: -0.01em; } // Sub-section title
+          h3 { font-size: 1.4em; } // Content grouping title
+          h4 { font-size: 1.2em; } // Minor heading
 
           p {
-            margin-bottom: 1em; // Standard paragraph spacing
+            margin-bottom: $spacing-md; // Consistent paragraph spacing
+            line-height: 1.65;          // Optimized for long-form reading
           }
 
           ul, ol {
-            padding-left: 25px; // Indent lists
-            margin-bottom: 1.5em;
+            padding-left: $spacing-lg; // Indent lists for readability
+            margin-bottom: $spacing-lg;
             li {
-              margin-bottom: 0.5em;
+              margin-bottom: $spacing-xs; // Space between list items
+              line-height: 1.5;
             }
           }
 
+          // Blockquote Styling - for testimonials or key quotes
           blockquote {
-            background: var(--primary-very-low);        // Background color for quotes
-            color: var(--primary-text);                  // Text color for quotes
-            border-left: 5px solid var(--primary-action-low-mid, lighten($primary-action-sass, 20%)); // Subtle border
-            padding: 15px;                               // Internal padding
-            margin: 1.5em 0;                             // Vertical margin for separation
-            border-radius: 4px;                          // Slight rounding
+            background: var(--primary-very-low);        // Soft background for quotes
+            color: var(--primary-text);                  // Standard text color
+            border-left: 5px solid var(--primary-action-low-mid, #{$primary-action-low-mid-sass}); // Accent border
+            padding: $spacing-md $spacing-lg;            // Generous internal padding
+            margin: $spacing-lg 0;                       // Vertical margin for separation
+            border-radius: $border-radius-sm;            // Subtle rounding
             font-style: italic;                          // Italicize quoted text
+            position: relative;                          // For quote icon positioning
+            box-shadow: $shadow-sm;                      // Gentle shadow
 
-            &:before { // Quote icon styling
-              color: var(--primary-action-low-mid, lighten($primary-action-sass, 20%));
-              content: open-quote;
-              font-size: 3em;
+            &:before { // Large, subtle quote icon
+              color: var(--primary-low-mid, lighten($primary-action-sass, 25%));
+              content: '“'; // Use a proper typographic quote character
+              font-size: 5em; // Large quote mark
               line-height: 0.1em;
-              vertical-align: -0.4em;
-              margin-right: 0.1em;
-              font-weight: bold;
+              position: absolute;
+              top: $spacing-sm;
+              left: $spacing-sm;
+              opacity: 0.2; // Very subtle
+              font-family: serif; // Ensure consistent serif font for quote mark
+              z-index: 0; // Behind text
             }
-            p { display: inline; }
+            p {
+              display: inline; // Ensures paragraphs inside blockquote flow
+              position: relative; // Above pseudo-element
+              z-index: 1;
+            }
           }
 
-          // Image handling within content
-          & > p:first-child + div.lightbox-wrapper, // Hide initial hero image duplication
-          & > p img:not(.emoji):first-child { // Hide any image that is the very first content
+          // --- Image Handling within Content ---
+          // Hide initial redundant images often copied from hero section
+          & > p:first-child + div.lightbox-wrapper,
+          & > p img:not(.emoji):first-child {
             display: none;
           }
 
-          & > p ~ p img:not(.emoji) { // Display and style images in subsequent paragraphs
+          // Display and style images embedded within content paragraphs
+          & > p ~ p img:not(.emoji) {
             display: block;
             max-width: 100%;
             height: auto;
-            margin: 20px auto;          // Center images with good vertical spacing
-            border-radius: 8px;         // Rounded corners for images
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); // More prominent shadow
+            margin: $spacing-lg auto;   // Center images with good vertical spacing
+            border-radius: $border-radius-md; // Rounded corners for images
+            box-shadow: $shadow-md;     // Prominent shadow for visual pop
           }
 
-          figure { // Styling for images with figcaptions
-            margin: 1.5em 0;
+          figure { // Styling for images wrapped in <figure> tags (e.g., with captions)
+            margin: $spacing-lg 0;
             padding: 0;
             text-align: center;
-            img { // Ensure image inside figure is responsive
+            img {
               max-width: 100%;
               height: auto;
-              border-radius: 8px;
+              border-radius: $border-radius-md;
+              box-shadow: $shadow-md; // Consistent shadow
             }
           }
 
           figcaption {
-            margin-top: 10px;           // Space between image and caption
+            margin-top: $spacing-sm;           // Space between image and caption
             font-size: 0.9em;
-            font-weight: normal;       // Less bold, more subtle
+            font-weight: normal;
             text-align: center;
             color: var(--primary-medium);
+            line-height: 1.4;
           }
         }
       }
 
-      // Hide default Discourse post controls, topic map, and admin menu for a cleaner landing page
+      // Hide default Discourse post controls, topic map, and admin menu for a clean landing page
       nav.post-controls,
       .topic-map,
       .post-admin-menu {
@@ -358,57 +377,67 @@ $tertiary-action-contrast-sass: #ffffff; // Example: White for text on tertiary 
       }
     }
 
-    // --- Optional: Dedicated Call-to-Action Section ---
-    // You'd typically add a div with class "call-to-action" in your HTML template
+    // --- Dedicated Call-to-Action Section ---
+    // This section is designed to be a highly visible and compelling prompt for user action.
+    // Assumes you might add a `div class="call-to-action"` in your theme template.
     .call-to-action {
-      background-color: var(--secondary-background); // A distinct background color
-      padding: 30px 20px;                             // Generous padding
+      background-color: var(--secondary-background); // A distinct, often vibrant background
+      padding: $spacing-xxl $spacing-md;              // Very generous padding for prominence
       text-align: center;
-      border-radius: 8px;
-      margin-top: 30px;                               // Space above this section
-      margin-bottom: 30px;                            // Space below
+      border-radius: $border-radius-lg;               // More pronounced rounded corners
+      margin-top: $spacing-xxl;                       // Large space above
+      margin-bottom: $spacing-xxl;                    // Large space below
+      box-shadow: $shadow-lg;                         // Strong shadow to make it pop
 
       h2 {
-        font-size: 1.8em;
+        font-size: 2em;
         color: var(--secondary-strong);               // Strong color for CTA heading
-        margin-bottom: 15px;
+        margin-bottom: $spacing-md;
+        font-weight: 800;                             // Extra bold
+        line-height: 1.2;
       }
 
       p {
         color: var(--secondary-text);                 // Text color for CTA description
-        margin-bottom: 25px;
-        font-size: 1.1em;
+        margin-bottom: $spacing-lg;
+        font-size: 1.15em;
+        line-height: 1.6;
+        max-width: 90%;
+        margin-left: auto;
+        margin-right: auto;
       }
 
-      a.button { // Styles for a primary CTA button within this section
+      a.button { // Styles for the main CTA button within this section
         display: inline-block;
-        background-color: var(--secondary-action, #{$secondary-action-sass});    // Prominent action color
-        color: var(--secondary-action-contrast, #{$secondary-action-contrast-sass});      // Contrasting text
-        padding: 15px 30px;
+        background-color: var(--secondary-action, #{$secondary-action-sass});
+        color: var(--secondary-action-contrast, #{$secondary-action-contrast-sass});
+        padding: 18px $spacing-xxl;                   // Large padding for very easy tapping
         text-decoration: none;
-        border-radius: 8px;
+        border-radius: $border-radius-lg;             // More rounded corners
         font-weight: bold;
-        font-size: 1.1em;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); // Add a subtle shadow
+        font-size: 1.2em;                             // Larger font for button text
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);   // Stronger shadow for the button
 
         &:hover {
-          background-color: darken($secondary-action-sass, 8%); // Use Sass var here for darken()
-          transform: translateY(-3px);
+          background-color: darken($secondary-action-sass, 8%);
+          transform: translateY(-4px) scale(1.02);    // More pronounced lift and slight scale
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); // Deeper shadow on hover
         }
       }
     }
 
-    // --- Optional: Simple Landing Page Footer ---
-    // You'd likely add a div with class "landing-page-footer" to your template
+    // --- Minimalist Landing Page Footer ---
+    // A clean and subtle footer for copyright or light navigation.
+    // Assumes you might add a `div class="landing-page-footer"` in your theme template.
     .landing-page-footer {
       text-align: center;
-      padding: 25px 15px;
+      padding: $spacing-lg $spacing-md;
       color: var(--primary-low-mid);
-      font-size: 0.9em;
-      border-top: 1px solid var(--primary-low); // Separator from content above
-      background-color: var(--primary-background); // Match main background
-      margin-top: 30px; // Ensure space
+      font-size: 0.85em;
+      border-top: 1px solid var(--primary-low); // Subtle separator
+      background-color: var(--primary-background); // Matches main background
+      margin-top: $spacing-xxl; // Ensure significant space from content above
     }
   }
 }
