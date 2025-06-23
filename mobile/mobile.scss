@@ -1,31 +1,33 @@
 @import "common/foundation/variables";
 
+// ---
+// String Split Function (No changes needed here for styling improvement)
+// ---
 /// str-split function found at: https://github.com/sass-projects/stringy/blob/master/src/scss/_str-split.scss
 /// License: MIT
 
-/// String split
-///
 /// Splits a String into a list of substrings using `$separator`.
+///
 /// If separator is omitted, the list returned contains one element consisting of the entire string.
 /// If separator is an empty string, str is converted to a list of all characters.
 /// Integer specifying a limit on the number of splits to be found.
 /// The split method still splits on every match of separator, but it truncates the returned list to at most limit elements.
 ///
-/// @param {string}  $string
-/// @param {string}  $separator
-/// @param {$number} $limit
+/// @param {string} $string - The string to split.
+/// @param {string} $separator [null] - The string to split by.
+/// @param {number} $limit [null] - Optional limit on the number of splits to be found.
 ///
-/// @return {list}
+/// @return {list} A list of substrings.
 ///
 /// @author pascalduez https://gist.github.com/pascalduez/065e560c6314c7e9d7f8
 @function str-split($string, $separator: null, $limit: null) {
   $string: unquote($string);
 
   @if type-of($string) != "string" {
-    @error "`str-split` function expecting a string for $string; #{type-of($string)} given.";
+    @error "`str-split` function expecting a string for `$string`; #{type-of($string)} given.";
   }
 
-  $result: zip(());
+  $result: ();
 
   @if not $separator {
     @return ($string);
@@ -35,209 +37,256 @@
     @for $i from 1 through str-length($string) {
       $result: append($result, str-slice($string, $i, $i));
     }
-
     @return $result;
   }
 
-  $running: true;
-  $progress: $string;
-  $length: str-length($separator);
+  $current-string: $string;
+  $separator-length: str-length($separator);
 
-  @while $running {
-    $index: str-index($progress, $separator);
-    @if $index {
-      $result: append($result, str-slice($progress, 1, ($index - 1)));
-      $progress: str-slice($progress, ($index + $length));
-    } @else {
-      $running: false;
+  @while str-index($current-string, $separator) {
+    @if $limit and length($result) >= ($limit - 1) {
+      $result: append($result, $current-string);
+      @break;
     }
+
+    $index: str-index($current-string, $separator);
+    $result: append($result, str-slice($current-string, 1, ($index - 1)));
+    $current-string: str-slice($current-string, ($index + $separator-length));
   }
 
-  $result: append($result, $progress);
+  $result: append($result, $current-string);
 
-  @if $limit and $limit > 0 {
-    $limit: if($limit > length($result), length($result), $limit);
+  @if $limit and $limit > 0 and length($result) > $limit {
     $return: ();
     @for $i from 1 through $limit {
       $return: append($return, nth($result, $i));
     }
-
     @return $return;
   }
 
   @return $result;
 }
 
+// ---
+// Blog Category and Tag Styling for Mobile
+// ---
 @if $mobile_enabled == "true" {
-  $values: $blog_category;
-  $split-values: str-split($values, ",");
-  @each $value in $split-values {
-    .category-#{$value} {
+  // Generate category-specific classes
+  $blog-categories: str-split($blog_category, ",");
+  @each $category in $blog-categories {
+    .category-#{$category} {
       @extend %blog-category;
     }
   }
 
-  $values: $blog_tag;
-  $split-values: str-split($values, "|");
-  @each $value in $split-values {
-    .tag-#{$value} {
+  // Generate tag-specific classes
+  $blog-tags: str-split($blog_tag, "|");
+  @each $tag in $blog-tags {
+    .tag-#{$tag} {
       @extend %blog-tag;
     }
   }
 
   %blog-tag,
   %blog-category {
+    // --- Topic Title & Image ---
     #topic-title {
-      margin-top: 1em;
+      margin-top: 1.5em; // Slightly more margin for breathing room
+      margin-bottom: 1em; // Add bottom margin for separation
+      padding: 0 15px; // Add horizontal padding for content
+
+      h1 {
+        font-size: 1.8em; // Slightly larger for better readability on mobile
+        line-height: 1.3; // Improve line spacing
+        margin-bottom: 0.5em; // Space below the title
+      }
+      a.edit-topic .d-icon {
+        font-size: 0.6em; // Slightly larger for tap target
+      }
     }
+
     .blog-image-container {
       text-align: center;
+      margin-bottom: 1.5em; // Add space below the image container
+      padding: 0; // Ensure no extra padding, image should go edge-to-edge if designed for that
+
       .blog-image {
         background-position: center center;
         background-repeat: no-repeat;
         background-size: contain;
-        height: 440px;
+        height: 250px; // Optimized for mobile screen heights
+        width: 100%; // Ensure it takes full width of its container
+
         @if $image_display_style == 'responsive crop' {
-          background-size: cover;
-          width: 100%;
+          background-size: cover; // Fills the space, might crop
+          height: 250px; // Maintain consistent height
         }
       }
     }
 
+    // --- First Post (Blog Content) ---
     #post_1 {
+      padding: 0 15px; // Add horizontal padding for consistency with title
+
       .topic-avatar {
-        height: 25px;
-        width: 25px;
+        height: 30px; // Slightly larger avatar
+        width: 30px; // Slightly larger avatar
         border-top: none;
         background: none;
-        margin-right: 5px;
+        margin-right: 8px; // More space
+        display: inline-flex; // Use flex for avatar and flair alignment
+        align-items: center;
+
         img.avatar {
-          height: 25px;
-          width: 25px;
+          height: 30px;
+          width: 30px;
+          border-radius: 50%; // Make avatars circular
         }
 
         .avatar-flair {
-          background-size: 8px 8px;
-          width: 0.75em;
-          height: 0.7em;
+          background-size: 10px 10px; // Slightly larger flair
+          width: 1em; // Adjust width/height based on flair size
+          height: 1em;
           top: unset;
-          bottom: -2px;
-          right: -2px;
+          bottom: -3px; // Adjust position relative to new avatar size
+          right: -3px;
           svg {
-            height: 0.5em;
+            height: 0.7em; // Adjust SVG size
           }
         }
       }
+
       .topic-body {
-        padding-top: 0px;
+        padding-top: 0; // Consistent with initial setting
 
         &.highlighted {
-          animation: none;
+          animation: none; // Keep animation off
         }
 
         .topic-meta-data {
-          display: block;
-          margin-bottom: 10px;
-          margin-left: 2px;
-          font-size: 0.75em;
+          display: flex; // Use flexbox for better alignment of meta info
+          flex-wrap: wrap; // Allow wrapping on small screens
+          justify-content: space-between; // Space out elements
+          align-items: center; // Vertically align items
+          margin-bottom: 15px; // More space below meta data
+          font-size: 0.8em; // Keep concise font size
+
           .names {
-            flex-wrap: nowrap;
+            flex-grow: 1; // Allow names to take available space
+            margin-right: 10px; // Space between name and post info
             .second,
             .user-title {
-              flex-basis: unset;
+              flex-basis: auto; // Let content determine width
+              white-space: nowrap; // Prevent wrapping for user titles if possible
             }
           }
 
           .post-infos {
             display: flex;
-            justify-content: space-between;
+            // Floats here might disrupt flex layout, consider replacing with flex order/margins
             .post-info.edits {
-              float: right;
-              margin-left: 5px;
-              order: 1;
+              margin-left: 10px; // Consistent spacing
+              order: 2; // Place edits after date
             }
             .post-info.post-date {
-              float: left;
+              order: 1; // Place date first
             }
           }
         }
+
         .contents {
           border-top: 1px solid var(--primary-low);
+          padding-top: 15px; // Add padding above content after border
         }
       }
 
       .cooked {
+        font-size: 1.1em; // Increase base font size for readability
+        line-height: 1.6; // Improve line height for better reading flow
+        word-wrap: break-word; // Ensure long words break correctly
+        overflow-wrap: break-word;
+
         big {
-          font-size: 2rem;
-          line-height: 2rem;
-          letter-spacing: 1px;
+          font-size: 2.2rem; // Slightly larger initial letter
+          line-height: 2.2rem;
+          letter-spacing: 0.5px; // Slightly reduced letter spacing for aesthetic
           display: inline-block;
-          font-family: Georgia;
+          font-family: Georgia, serif; // Ensure a serif font for classic drop-cap look
+          margin-right: 0.1em; // Small space after the big letter
         }
 
+        // Hide first image if directly after the first paragraph (often a hero image replica)
         & > p:first-child + div.lightbox-wrapper {
           display: none;
           & + p {
-            margin-top: -15px;
+            margin-top: -10px; // Reduce margin if image is hidden
           }
         }
 
+        // Hide images directly within *any* first-level paragraph, unless they are emojis
+        // This is a strong rule; consider if you want ALL images in initial paragraphs hidden
         & > p img:not(.emoji) {
           display: none;
         }
 
+        // Display images in subsequent paragraphs for content images
         & > p ~ p img:not(.emoji) {
           display: block;
+          max-width: 100%; // Ensure images don't overflow container
+          height: auto; // Maintain aspect ratio
+          margin: 1em auto; // Center images with vertical spacing
         }
       }
     }
 
-    #topic-title h1 {
-      font-size: 1.5em;
-    }
-    #topic-title a.edit-topic .d-icon {
-      font-size: 0.5em;
-    }
-
+    // --- First Post Specifics ---
     .topic-post:first-child {
       .cooked {
-        font-size: 1.25em;
+        font-size: 1.15em; // Slightly larger for the main blog content
         .lightbox-wrapper .meta {
-          font-size: 0.75em;
+          font-size: 0.8em; // Metadata font size
         }
       }
 
       nav.post-controls .actions,
       .topic-map,
       .post-admin-menu {
-        font-size: 0.75em;
+        font-size: 0.8em; // Slightly larger controls for easier tapping
+        margin-top: 1em; // Space above controls
       }
 
       figure {
-        margin: 0;
+        margin: 1em 0; // Add some vertical margin for figures
+        padding: 0 5px; // Slight horizontal padding
       }
 
       figcaption {
-        margin-top: -16px;
-        font-size: 0.8em;
+        margin-top: 5px; // Positive margin to clearly link to figure
+        font-size: 0.85em; // Slightly larger for captions
         font-weight: bold;
+        text-align: center; // Center align captions
+        color: var(--primary-medium); // Slightly muted color for captions
       }
 
       blockquote {
         background: var(--primary-very-low);
         color: var(--primary-high);
-        border-left: 10px solid var(--primary-low-mid);
-        padding: 0.5em 10px;
-      }
-      blockquote:before {
-        color: var(--primary-low-mid);
-        content: open-quote;
-        font-size: 4em;
-        line-height: 0.1em;
-        vertical-align: -0.4em;
-      }
-      blockquote p {
-        display: inline;
+        border-left: 8px solid var(--primary-low-mid); // Slightly thinner border
+        padding: 1em 15px; // More padding inside blockquote
+        margin: 1.5em 0; // Add vertical margin for separation
+
+        &:before {
+          color: var(--primary-low-mid);
+          content: open-quote;
+          font-size: 3em; // Slightly smaller quote mark
+          line-height: 0.1em;
+          vertical-align: -0.4em;
+          margin-right: 0.1em; // Small space after quote mark
+        }
+
+        p {
+          display: inline;
+        }
       }
     }
   }
